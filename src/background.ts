@@ -228,7 +228,7 @@ const sendUpdateMessagesOnMessage = (researchIds: ResearchIDs) =>
 ;
 
 (() => {
-	const stoplist: Stoplist = new Set(["i", "a", "an", "and", "or", "not", "the", "there", "where", "to", "do",
+	const stoplist: Stoplist = new Set(["i", "a", "an", "and", "or", "not", "the", "there", "where", "to", "do", "of",
 		"is", "isn't", "are", "aren't", "can", "can't", "how"]);
 	const researchIds: ResearchIDs = {};
 	const engines: Engines = {};

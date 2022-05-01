@@ -40,6 +40,14 @@ interface SelectTermPtr {
 	selectTerm: (command: string) => void
 }
 
+class HighlightElement extends HTMLSpanElement {
+	nodeEnd: Node
+
+	constructor () {
+		super();
+	}
+}
+
 const select = (element: ElementID | ElementClass, param?: string | number) =>
 	["markmysearch", element, param].join("-").slice(0, param ? undefined : -1)
 ;
@@ -489,7 +497,7 @@ const highlightInNodes = (() => {
 			end += text.substring(end - 1).search(wordRightPattern);
 		}
 		const textStart = text.substring(0, start);
-		const highlight = document.createElement("mms-h");
+		const highlight = document.createElement("mms-h") as HighlightElement;
 		highlight.classList.add(select(ElementClass.TERM, term.selector));
 		highlight.textContent = text.substring(start, end);
 		textEndNode.textContent = text.substring(end);
@@ -497,6 +505,8 @@ const highlightInNodes = (() => {
 		if (textStart !== "") {
 			const textStartNode = document.createTextNode(textStart);
 			textEndNode.parentNode.insertBefore(textStartNode, highlight);
+			highlight.nodeEnd = textEndNode;
+			console.log(highlight.nodeEnd);
 			return textStartNode;
 		}
 	};
@@ -507,6 +517,8 @@ const highlightInNodes = (() => {
 			const matches = textFlow.matchAll(term.pattern);
 			let currentNodeStart = 0;
 			let match: RegExpMatchArray = matches.next().value;
+			if (!match)
+				continue;
 			let nodeItemPrevious: UnbrokenNodeListItem;
 			for (const nodeItem of nodeItems) {
 				const nextNodeStart = currentNodeStart + nodeItem.value.textContent.length;
@@ -588,7 +600,6 @@ const highlightInNodes = (() => {
 				node = walkerBreakHandler.nextSibling();
 			}
 		}
-		document.body.normalize();
 	};
 })();
 
@@ -617,10 +628,32 @@ const getObserverNodeHighlighter = (() => {
 	return (highlightTags: HighlightTags, terms: MatchTerms) =>
 		new MutationObserver(mutations => {
 			for (const mutation of mutations) {
+				for (const node of Array.from(mutation.removedNodes)) {
+					console.log(node);
+					if (node.nodeType === Node.TEXT_NODE) {
+						const highlight = mutation.previousSibling as HighlightElement;
+						console.log(highlight);
+						if (highlight && highlight.nodeType === Node.ELEMENT_NODE
+						&& highlight.tagName === "MMS-H") {
+							const end = highlight.nodeEnd;
+							console.log(highlight);
+							let before: Node = highlight;
+							while (before) {
+								console.log(before);
+								if (before.nodeType === Node.ELEMENT_NODE && (before as Element).tagName === "MMS-H"
+									&& (before as HighlightElement).nodeEnd !== end) {
+									break;
+								}
+								const a = before;
+								before = before.previousSibling;
+								a.parentNode.removeChild(before);
+							}
+						}
+					}
+				}
 				for (const node of Array.from(mutation.addedNodes)) {
 					if (node.nodeType === Node.ELEMENT_NODE && canHighlightNode(highlightTags, node as Element)) {
 						highlightInNodes(node, highlightTags, terms);
-						node.normalize();
 					}
 				}
 			}
@@ -630,7 +663,7 @@ const getObserverNodeHighlighter = (() => {
 })();
 
 const highlightInNodesOnMutation = (observer: MutationObserver) =>
-	observer.observe(document.body, {childList: true, subtree: true})
+	observer.observe(document.body, { childList: true, subtree: true })
 ;
 
 const insertHighlighting = (() => {
@@ -686,6 +719,8 @@ const insertHighlighting = (() => {
 		}
 		selectTermOnCommand(highlightTags, terms, selectTermPtr);
 		highlightInNodes(document.body, highlightTags, terms);
+		setTimeout(() =>
+			Array.from(document.body.getElementsByTagName("mms-h")).forEach((element: HighlightElement) => console.log(element.nodeEnd)), 3000);
 		terms.forEach(term => updateTermTooltip(term));
 		highlightInNodesOnMutation(observer);
 		addScrollMarkers(terms); // TODO: make dynamic
@@ -765,11 +800,6 @@ const parseCommand = (commandString: string): { type: CommandType, termIdx?: num
 	};
 
 	return (() => {
-		class HighlightElement extends HTMLSpanElement {
-			constructor () {
-				super();
-			}
-		}
 		customElements.define("mms-h", HighlightElement, { extends: "span" });
 		const commands: BrowserCommands = [];
 		const selectTermPtr: SelectTermPtr = { selectTerm: command => { command; } };
