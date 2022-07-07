@@ -12,7 +12,7 @@ const buttonKeyToId = (key: ButtonKey) =>
 (() => {
 	const style = document.createElement("style");
 	style.textContent = `
-body { margin: 0; padding: 0; border: 0; }
+body { margin: 0; padding: 0; border: 0; width: max-content; }
 #${buttonKeyToId("problemReportDescribe")} { display: grid; }
 body > div { display: grid; }
 button { background-color: hsl(0, 0%, 70%); text-align: left;
@@ -95,10 +95,10 @@ buttonArray.forEach((button, i) => {
 });
 
 buttons.researchTogglePage.onclick = () =>
-	browser.tabs.query({ active: true, lastFocusedWindow: true }).then(([ tab ]) => tab.id === undefined ? undefined :
+	chrome.tabs.query({ active: true, lastFocusedWindow: true }).then(([ tab ]) => tab.id === undefined ? undefined :
 		getStorageLocal(StorageLocal.RESEARCH_INSTANCES).then(local => (tab.id as number) in local.researchInstances
-			? browser.runtime.sendMessage({ disableTabResearch: true } as BackgroundMessage)
-			: browser.runtime.sendMessage({ terms: [], makeUnique: true, toggleHighlightsOn: true } as BackgroundMessage)
+			? chrome.runtime.sendMessage({ disableTabResearch: true } as BackgroundMessage)
+			: chrome.runtime.sendMessage({ terms: [], makeUnique: true, toggleHighlightsOn: true } as BackgroundMessage)
 		)
 	)
 ;
@@ -106,10 +106,10 @@ buttons.researchTogglePage.onclick = () =>
 buttons.researchToggle.onclick = () => {
 	const toggleResearchOn = !buttons.researchToggle.classList.contains(ButtonClass.ENABLED);
 	buttons.researchToggle.classList[toggleResearchOn ? "add" : "remove"](ButtonClass.ENABLED);
-	browser.runtime.sendMessage({ toggleResearchOn });
+	chrome.runtime.sendMessage({ toggleResearchOn });
 };
 
-const problemReport = (userMessage = "") => browser.tabs.query({ active: true, lastFocusedWindow: true }).then(([ tab ]) =>
+const problemReport = (userMessage = "") => chrome.tabs.query({ active: true, lastFocusedWindow: true }).then(([ tab ]) =>
 	tab.id === undefined ? undefined : getStorageLocal(StorageLocal.RESEARCH_INSTANCES).then(local => {
 		const phrases = local.researchInstances[tab.id ?? -1]
 			? local.researchInstances[tab.id ?? -1].terms.map((term: MatchTerm) => term.phrase).join(" ∣ ")
@@ -120,7 +120,7 @@ const problemReport = (userMessage = "") => browser.tabs.query({ active: true, l
 		buttons.problemReport.disabled = true;
 		buttons.problemReportDescribe.disabled = true;
 		emailSend("service_mms_report", "template_mms_report", {
-			mmsVersion: browser.runtime.getManifest().version,
+			mmsVersion: chrome.runtime.getManifest().version,
 			url: tab.url,
 			phrases,
 			userMessage,

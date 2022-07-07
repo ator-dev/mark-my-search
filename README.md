@@ -50,8 +50,8 @@ _As of 2022-05-31_
 
 Releases are regularly ported between browsers.
 
-* **Mark My Search v1.0.14** is compatible with reasonably modern Firefox releases, and will remain so while Manifest V2 is supported (so for the foreseeable future). V3 will be supported once it is at a reasonable stage of development.
-* **Mark My Search v1.0.11** is compatible with browsers using very recent releases of Chromium; Manifest V3 is supported but V2 is not explicitly tested.
+* **Mark My Search v1.1.2** is compatible with reasonably modern Firefox releases, and will remain so while Manifest V2 is supported. V3 will be supported once it has been further developed by Mozilla.
+* **Mark My Search v1.1.2** is compatible with browsers using recent releases of Chromium, as Manifest V3 is supported but V2 is not explicitly tested.
 
 
 ## Store Listings

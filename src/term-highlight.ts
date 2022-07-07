@@ -1,4 +1,4 @@
-type BrowserCommands = Array<browser.commands.Command>
+type chromeCommands = Array<chrome.commands.Command>
 type HighlightTags = Record<string, RegExp>
 type TermHues = ReadonlyArray<number>
 type ButtonInfo = {
@@ -53,8 +53,8 @@ interface ControlsInfo {
 	[StorageSync.BAR_CONTROLS_SHOWN]: StorageSyncValues[StorageSync.BAR_CONTROLS_SHOWN]
 }
 
-if (browser) {
-	self["chrome" as string] = browser;
+if (chrome) {
+	self["chrome" as string] = chrome;
 }
 
 // Get a selector used for element identification / classification / styling. Shortened due to prolific use.
@@ -109,52 +109,52 @@ const jumpToTerm = (() => {
 				: NodeFilter.FILTER_SKIP);
 		walk.currentNode = anchor ? anchor : document.body;
 		const nextNodeMethod = reverse ? "previousNode" : "nextNode";
-		let elementTerm = walk[nextNodeMethod]() as HTMLElement;
-		if (!elementTerm) {
-			walk.currentNode = reverse && document.body.lastElementChild ? document.body.lastElementChild : document.body;
-			elementTerm = walk[nextNodeMethod]() as HTMLElement;
+		// eslint-disable-next-line no-constant-condition
+		while (true) {
+			let elementTerm = walk[nextNodeMethod]() as HTMLElement;
 			if (!elementTerm) {
-				acceptInAnchorContainer.value = true;
+				walk.currentNode = reverse && document.body.lastElementChild ? document.body.lastElementChild : document.body;
 				elementTerm = walk[nextNodeMethod]() as HTMLElement;
 				if (!elementTerm) {
-					return;
+					acceptInAnchorContainer.value = true;
+					elementTerm = walk[nextNodeMethod]() as HTMLElement;
+					if (!elementTerm) {
+						return;
+					}
 				}
 			}
-		}
-		const container = getContainerBlock(highlightTags, elementTerm.parentElement as HTMLElement);
-		container.classList.add(getSel(ElementClass.FOCUS_CONTAINER));
-		elementTerm.classList.add(getSel(ElementClass.FOCUS));
-		let elementToSelect = Array.from(container.getElementsByTagName("mms-h"))
-			.every(thisElement => getContainerBlock(highlightTags, thisElement.parentElement as HTMLElement) === container)
-			? container
-			: elementTerm;
-		if (elementToSelect.tabIndex === -1) {
-			if (!this.browser) { // Attempt to focus parent link in Chromium (FIrefox considers link focused when child is focused).
-				(elementToSelect.parentElement as HTMLElement).focus({ preventScroll: true });
-				if (document.activeElement === elementToSelect.parentElement) {
-					elementToSelect = elementToSelect.parentElement as HTMLElement;
-				}
+			const container = getContainerBlock(highlightTags, elementTerm.parentElement as HTMLElement);
+			let elementToSelect = Array.from(container.getElementsByTagName("mms-h"))
+				.every(thisElement => getContainerBlock(highlightTags, thisElement.parentElement as HTMLElement) === container)
+				? container
+				: elementTerm;
+			if (elementToSelect.tabIndex === -1) {
+				elementToSelect.classList.add(getSel(ElementClass.FOCUS_REVERT));
+				elementToSelect.tabIndex = 0;
 			}
-			elementToSelect.classList.add(getSel(ElementClass.FOCUS_REVERT));
-			elementToSelect.tabIndex = 0;
-		}
-		elementToSelect.focus({ preventScroll: true });
-		if (document.activeElement !== elementToSelect) {
-			const element = document.createElement("div");
-			element.tabIndex = 0;
-			element.classList.add(getSel(ElementClass.REMOVE));
-			elementToSelect.insertAdjacentElement(reverse ? "afterbegin" : "beforeend", element);
-			elementToSelect = element;
 			elementToSelect.focus({ preventScroll: true });
+			if (document.activeElement !== elementToSelect) {
+				const element = document.createElement("div");
+				element.tabIndex = 0;
+				element.classList.add(getSel(ElementClass.REMOVE));
+				elementToSelect.insertAdjacentElement(reverse ? "afterbegin" : "beforeend", element);
+				elementToSelect = element;
+				elementToSelect.focus({ preventScroll: true });
+			}
+			if (document.activeElement === elementToSelect) {
+				elementToSelect.scrollIntoView({ behavior: "smooth", block: "center" });
+				container.classList.add(getSel(ElementClass.FOCUS_CONTAINER));
+				elementTerm.classList.add(getSel(ElementClass.FOCUS));
+				if (selection)
+					selection.setBaseAndExtent(elementToSelect, 0, elementToSelect, 0);
+				Array.from(document.body.getElementsByClassName(getSel(ElementClass.REMOVE)))
+					.forEach((element: HTMLElement) => {
+						element.remove();
+					})
+				;
+				return;
+			}
 		}
-		elementToSelect.scrollIntoView({ behavior: "smooth", block: "center" });
-		if (selection)
-			selection.setBaseAndExtent(elementToSelect, 0, elementToSelect, 0);
-		Array.from(document.body.getElementsByClassName(getSel(ElementClass.REMOVE)))
-			.forEach((element: HTMLElement) => {
-				element.remove();
-			})
-		;
 	};
 })();
 
@@ -211,7 +211,7 @@ const createTermInput = (terms: MatchTerms, termButton: HTMLButtonElement, idx: 
 			};
 		}
 		if (message) {
-			browser.runtime.sendMessage(message);
+			chrome.runtime.sendMessage(message);
 		}
 	};
 	termButton.oncontextmenu = show;
@@ -234,7 +234,7 @@ const insertStyle = (terms: MatchTerms, style: HTMLElement, hues: ReadonlyArray<
 	.${getSel(ElementClass.CONTROL_BUTTON)}:hover,
 	.${getSel(ElementClass.CONTROL_BUTTON)}:disabled,
 	.${getSel(ElementClass.CONTROL_BUTTON)}.${getSel(ElementClass.DISABLED)} {
-	all: revert; color: #111; border-style: none; box-shadow: 1px 1px 5px; border-radius: 4px; }
+	all: revert; color: #111; border-style: none; box-shadow: 1px 1px 5px; border-radius: 4px; padding-inline: 4px; }
 .${getSel(ElementClass.TERM_MATCH_CASE)} .${getSel(ElementClass.CONTROL_BUTTON)} {
 	padding-top: 0; border-top: 1px dashed black; }
 #${getSel(ElementID.BAR_TERMS)} :not(.${getSel(ElementClass.TERM_MATCH_STEM)}) .${getSel(ElementClass.CONTROL_BUTTON)} {
@@ -364,7 +364,7 @@ const insertTermControl = (() => {
 				termChanged: term,
 				termChangedIdx: idx,
 			};
-			browser.runtime.sendMessage(message);
+			chrome.runtime.sendMessage(message);
 		};
 		const option = document.createElement("button");
 		option.classList.add(getSel(ElementClass.OPTION));
@@ -399,7 +399,7 @@ const insertTermControl = (() => {
 	};
 })();
 
-const getTermCommands = (commands: BrowserCommands) => {
+const getTermCommands = (commands: chromeCommands) => {
 	const commandsDetail = commands.map(command => ({
 		info: command.name ? parseCommand(command.name) : { type: CommandType.NONE },
 		shortcut: command.shortcut ?? "",
@@ -436,14 +436,14 @@ const addControls = (() => {
 				[BarControl.DISABLE_TAB_RESEARCH]: {
 					label: "X",
 					containerId: ElementID.BAR_OPTIONS,	
-					onclick: () => browser.runtime.sendMessage({
+					onclick: () => chrome.runtime.sendMessage({
 						disableTabResearch: true,
 					} as BackgroundMessage),
 				},
 				[BarControl.PERFORM_SEARCH]: {
 					label: "search",
 					containerId: ElementID.BAR_OPTIONS,
-					onclick: () => browser.runtime.sendMessage({
+					onclick: () => chrome.runtime.sendMessage({
 						performSearch: true,
 					} as BackgroundMessage),
 				},
@@ -456,7 +456,7 @@ const addControls = (() => {
 		;
 	})();
 
-	return (highlightTags: HighlightTags, commands: BrowserCommands, terms: MatchTerms,
+	return (highlightTags: HighlightTags, commands: chromeCommands, terms: MatchTerms,
 		style: HTMLElement, controlsInfo: ControlsInfo, hues: TermHues) => {
 		insertStyle(terms, style, hues);
 		const bar = document.createElement("div");
@@ -791,11 +791,6 @@ const insertHighlighting = (() => {
 	return (highlightTags: HighlightTags, terms: MatchTerms, disable: boolean, termsFromSelection: boolean,
 		selectTermPtr: FnProcessCommand, observer: MutationObserver) => {
 		observer.disconnect();
-		restoreNodes();
-		if (disable) {
-			removeControls();
-			return;
-		}
 		if (termsFromSelection) {
 			const selection = document.getSelection();
 			if (selection && selection.anchorNode) {
@@ -805,7 +800,14 @@ const insertHighlighting = (() => {
 			} else {
 				terms = [];
 			}
-			browser.runtime.sendMessage({ terms, makeUnique: true, toggleHighlightsOn: true } as BackgroundMessage);
+			chrome.runtime.sendMessage({ terms, makeUnique: true, toggleHighlightsOn: true } as BackgroundMessage);
+		}
+		restoreNodes();
+		if (disable) {
+			removeControls();
+			return;
+		}
+		if (termsFromSelection) {
 			return;
 		}
 		selectTermOnCommand(highlightTags, terms, selectTermPtr);
@@ -819,13 +821,13 @@ const insertHighlighting = (() => {
 (() => {
 	// TODO: configuration
 	const refreshTermControls = (() => {
-		const insertInterface = (highlightTags: HighlightTags, commands: BrowserCommands, terms: MatchTerms,
+		const insertInterface = (highlightTags: HighlightTags, commands: chromeCommands, terms: MatchTerms,
 			style: HTMLElement, controlsInfo: ControlsInfo, hues: TermHues) => {
 			removeControls();
 			addControls(highlightTags, commands, terms, style, controlsInfo, hues);
 		};
 	
-		return (highlightTags: HighlightTags, terms: MatchTerms, commands: BrowserCommands, style: HTMLElement,
+		return (highlightTags: HighlightTags, terms: MatchTerms, commands: chromeCommands, style: HTMLElement,
 			observer: MutationObserver, selectTermPtr: FnProcessCommand, termsFromSelection: boolean, disable: boolean,
 			controlsInfo: ControlsInfo, hues: TermHues,
 			termsUpdate?: MatchTerms, termUpdate?: MatchTerm, termToUpdateIdx?: number) => {
@@ -869,7 +871,7 @@ const insertHighlighting = (() => {
 	};
 
 	return (() => {
-		const commands: BrowserCommands = [];
+		const commands: chromeCommands = [];
 		const processCommand: FnProcessCommand = { call: command => { command; } };
 		const terms: MatchTerms = [];
 		const hues: TermHues = [ 60, 300, 110, 220, 0, 190, 30 ];
@@ -889,7 +891,7 @@ const insertHighlighting = (() => {
 		};
 		const observer = getObserverNodeHighlighter(highlightTags, terms);
 		const style = insertStyleElement();
-		browser.runtime.onMessage.addListener((message: HighlightMessage, sender, sendResponse) => {
+		chrome.runtime.onMessage.addListener((message: HighlightMessage, sender, sendResponse) => {
 			if (message.extensionCommands) {
 				commands.splice(0);
 				message.extensionCommands.forEach(command => commands.push(command));
@@ -916,7 +918,7 @@ const insertHighlighting = (() => {
 			// TODO: improve handling of highlight setting
 			const bar = document.getElementById(getSel(ElementID.BAR)) as HTMLElement;
 			bar.classList[controlsInfo.highlightsShown ? "add" : "remove"](getSel(ElementClass.HIGHLIGHTS_SHOWN));
-			sendResponse(); // Manifest V3 bug.
+			sendResponse(true); // Manifest V3 bug prints an error if this is not called.
 		});
 	});
 })()();

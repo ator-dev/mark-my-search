@@ -85,7 +85,7 @@ const setStorageLocal = (items: StorageLocalValues) => {
 		items[StorageLocal._ID_R_INSTANCES] = idRInstances;
 		items[StorageLocal._TAB_R_INSTANCE_IDS] = tabRInstanceIds;
 	}
-	return browser.storage.local.set(items);
+	return chrome.storage.local.set(items);
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -99,7 +99,7 @@ const getStorageLocal = async (keysParam?: StorageLocal | Array<StorageLocal>): 
 		keys.push(StorageLocal._ID_R_INSTANCES);
 		keys.push(StorageLocal._TAB_R_INSTANCE_IDS);
 	}
-	const local = await browser.storage.local.get(keys) as StorageLocalValues;
+	const local = await chrome.storage.local.get(keys) as StorageLocalValues;
 	if (gettingRInstances) {
 		const idRInstances = local[StorageLocal._ID_R_INSTANCES];
 		const tabRInstanceIds = local[StorageLocal._TAB_R_INSTANCE_IDS];
@@ -129,13 +129,13 @@ const initStorageLocal = () => getStorageLocal(StorageLocal.ENABLED).then(local 
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const setStorageSync = (items: StorageSyncValues) => {
-	return browser.storage.sync.set(items);
+	return chrome.storage.sync.set(items);
 };
 
 // TODO: make generic function for sync and local
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const getStorageSync = (keysParam?: StorageSync | Array<StorageSync>): Promise<StorageSyncValues> => {
-	return browser.storage.sync.get(keysParam) as Promise<StorageSyncValues>;
+	return chrome.storage.sync.get(keysParam) as Promise<StorageSyncValues>;
 };
 
 const fixObjectWithDefaults = (
@@ -172,5 +172,5 @@ const repairOptions = () => getStorageSync().then(sync => {
 	const toRemove = [];
 	fixObjectWithDefaults(sync, defaultOptions, toRemove, true);
 	setStorageSync(sync);
-	browser.storage.sync.remove(toRemove);
+	chrome.storage.sync.remove(toRemove);
 });
