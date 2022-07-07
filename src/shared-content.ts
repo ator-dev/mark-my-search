@@ -1,4 +1,4 @@
-type MatchTerms = Array<MatchTerm>;
+type MatchTerms = Array<MatchTerm>
 
 interface MatchMode {
 	case: boolean
@@ -7,17 +7,17 @@ interface MatchMode {
 }
 
 class MatchTerm {
-	phrase: string
-	selector: string
-	pattern: RegExp
-	matchMode: MatchMode
-	hue: number
-	command: string
-	commandReverse: string
+	phrase: string;
+	selector: string;
+	pattern: RegExp;
+	matchMode: MatchMode;
+	hue: number;
+	command: string;
+	commandReverse: string;
     
 	constructor (phrase: string, matchMode?: MatchMode) {
 		this.phrase = phrase;
-		this.matchMode = phrase.length > 3 ? { case: false, stem: true, whole: false } : { case: false, stem: false, whole: true };
+		this.matchMode = phrase.length > 2 ? { case: false, stem: true, whole: false } : { case: false, stem: false, whole: true };
 		if (matchMode)
 			Object.assign(this.matchMode, matchMode);
 		this.compile();
@@ -28,13 +28,9 @@ class MatchTerm {
 			this.matchMode.stem = false;
 		this.selector = this.phrase.replace(/\s/g, "_");
 		const flags = this.matchMode.case ? "gu" : "giu";
-		const exp = (this.matchMode.stem
-			? getWordPatternString(this.phrase.replace(/o+/g, "oo"))
-			: this.phrase
-		);
+		const exp = (this.matchMode.stem ? getWordPatternString(this.phrase) : this.phrase);
 		const sanitize = (word: string) =>
 			word.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&");
-		console.log(exp);
 		const addOptionalHyphens = (word: string) =>
 			word.replace(/(\w\?|\w)/g,"(\\p{Pd})?$1");
 		let patternString: string;
@@ -45,15 +41,14 @@ class MatchTerm {
 			patternString = sanitize(exp[0]) + addOptionalHyphens(sanitize(exp).substring(1));
 		}
 		this.pattern = new RegExp(this.matchMode.whole ? `\\b(?:${patternString})\\b` : patternString, flags);
-		console.log(this.pattern);
 	}
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 class Engine {
-	hostname: string
-	pathname: [string, string]
-	param: string
+	hostname: string;
+	pathname: [ string, string ];
+	param: string;
 
 	constructor (args?: { urlPatternString: string }) {
 		if (!args)
@@ -61,11 +56,13 @@ class Engine {
 		// TODO: error checking?
 		const urlPattern = new URL(args.urlPatternString);
 		this.hostname = urlPattern.hostname;
-		if (urlPattern.pathname.includes(ENGINE_RFIELD)) {
-			const parts = urlPattern.pathname.split(ENGINE_RFIELD);
-			this.pathname = [parts[0], parts[1].slice(0, parts[1].endsWith("/") ? parts[1].length : undefined)];
+		if (urlPattern.pathname.includes("%s")) {
+			const parts = urlPattern.pathname.split("%s");
+			this.pathname = [ parts[0], parts[1].slice(0, parts[1].endsWith("/") ? parts[1].length : undefined) ];
 		} else {
-			this.param = Array.from(urlPattern.searchParams).find(param => param[1].includes(ENGINE_RFIELD))[0];
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			const [ param, arg ] = Array.from(urlPattern.searchParams).find(param => param[1].includes("%s")) ?? [ "", "" ];
+			this.param = param;
 		}
 	}
 
@@ -78,7 +75,7 @@ class Engine {
 					url.pathname.lastIndexOf(this.pathname[1])).split("+")
 				: null
 			: url.searchParams.has(this.param)
-				? matchOnly ? [] : url.searchParams.get(this.param).split(" ")
+				? matchOnly ? [] : (url.searchParams.get(this.param) ?? "").split(" ")
 				: null;
 	}
 
@@ -95,13 +92,15 @@ class Engine {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface HighlightMessage {
-	command?: string
+	command?: CommandInfo
 	extensionCommands?: Array<browser.commands.Command>
 	terms?: MatchTerms
 	termUpdate?: MatchTerm
 	termToUpdateIdx?: number
 	disable?: boolean
 	termsFromSelection?: boolean
+	toggleHighlightsOn?: boolean
+	barControlsShown?: StorageSyncValues[StorageSync.BAR_CONTROLS_SHOWN]
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -110,6 +109,78 @@ interface BackgroundMessage {
 	termChanged?: MatchTerm
 	termChangedIdx?: number
 	makeUnique?: boolean
-	disablePageResearch?: boolean
+	disableTabResearch?: boolean
 	toggleResearchOn?: boolean
+	toggleHighlightsOn?: boolean
+	performSearch?: boolean
+}
+
+enum CommandType {
+	NONE,
+	ENABLE_IN_TAB,
+	TOGGLE_ENABLED,
+	TOGGLE_BAR,
+	TOGGLE_HIGHLIGHTS,
+	TOGGLE_SELECT,
+	ADVANCE_GLOBAL,
+	SELECT_TERM,
+}
+
+interface CommandInfo {
+	type: CommandType
+	termIdx?: number
+	reversed?: boolean
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const parseCommand = (commandString: string): CommandInfo => {
+	const parts = commandString.split("-");
+	switch (parts[0]) {
+	case "enable": {
+		switch (parts[1]) {
+		case "research": {
+			return { type: CommandType.ENABLE_IN_TAB };
+		}}
+		break;
+	} case "toggle": {
+		switch (parts[1]) {
+		case "research": {
+			switch (parts[2]) {
+			case "global": {
+				return { type: CommandType.TOGGLE_ENABLED };
+			}}
+			break;
+		} case "bar": {
+			return { type: CommandType.TOGGLE_BAR };
+		} case "highlights": {
+			return { type: CommandType.TOGGLE_HIGHLIGHTS };
+		} case "select": {
+			return { type: CommandType.TOGGLE_SELECT };
+		}}
+		break;
+	} case "advance": {
+		switch (parts[1]) {
+		case "global": {
+			return { type: CommandType.ADVANCE_GLOBAL, reversed: parts[2] === "reverse" };
+		}}
+		break;
+	} case "select": {
+		switch (parts[1]) {
+		case "term": {
+			return { type: CommandType.SELECT_TERM, termIdx: Number(parts[2]), reversed: parts[3] === "reverse" };
+		}}
+	}}
+	return { type: CommandType.NONE };
+};
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const itemsMatchLoosely = <T> (as: ReadonlyArray<T>, bs: ReadonlyArray<T>, compare = (a: T, b: T) => a === b) =>
+	as.length === bs.length && as.every((a, i) => compare(a, bs[i]))
+;
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+enum BarControl {
+	DISABLE_TAB_RESEARCH = "disableTabResearch",
+	PERFORM_SEARCH = "performSearch",
+	APPEND_TERM = "appendTerm",
 }
