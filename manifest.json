@@ -16,7 +16,7 @@
 	},
 
 	"permissions": [
-		"<all_urls>",
+		"*://*/*",
 		"tabs",
 		"storage",
 		"search",
@@ -28,7 +28,12 @@
 	],
 
 	"background": {
-		"page": "/pages/background.html",
+		"scripts": [
+			"/dist/manage-storage.js",
+			"/dist/stem-pattern-find.js",
+			"/dist/shared-content.js",
+			"/dist/background.js"
+		],
 		"persistent": false
 	},
 
