@@ -330,9 +330,9 @@ ${
 	{ position: fixed; width: 100%; height: 100%; }`
 			: `/* || Term Highlight */
 #${getSel(ElementID.BAR)}.${getSel(ElementClass.HIGHLIGHTS_SHOWN)}
-~ body [markmysearch-h_id] [markmysearch-h_beneath]
+~ body [style*="markmysearch-h_id"] [style*="markmysearch-h_beneath"]
 	{ background-color: transparent; }
-#${getSel(ElementID.BAR)}.${getSel(ElementClass.HIGHLIGHTS_SHOWN)} ~ body [markmysearch-h_id]
+#${getSel(ElementID.BAR)}.${getSel(ElementClass.HIGHLIGHTS_SHOWN)} ~ body [style*="markmysearch-h_id"]
 	{ background-image: paint(markmysearch-highlights) !important; --markmysearch-styles: ${JSON.stringify((() => {
 		const styles: TermSelectorStyles = {};
 		terms.forEach((term, i) => {
@@ -344,7 +344,7 @@ ${
 		return styles;
 	})())}; }
 #${getSel(ElementID.BAR)}.${getSel(ElementClass.HIGHLIGHTS_SHOWN)}
-~ body [markmysearch-h_id] > :not([markmysearch-h_id])
+~ body [style*="markmysearch-h_id"] > :not([style*="markmysearch-h_id"])
 	{ --markmysearch-styles: unset; --markmysearch-boxes: unset; }
 /**/`
 }
@@ -1563,7 +1563,7 @@ const insertScrollMarkersPaint = (terms: MatchTerms, hues: TermHues) => {
 	const termSelectorsAllowed = new Set(terms.slice(0, hues.length).map(term => term.selector));
 	const gutter = document.getElementById(getSel(ElementID.MARKER_GUTTER)) as HTMLElement;
 	let markersHtml = "";
-	document.body.querySelectorAll("[markmysearch-h_id]").forEach((element: HTMLElement) => {
+	document.body.querySelectorAll("[style*='markmysearch-h_id']").forEach((element: HTMLElement) => {
 		const termSelectors: Set<string> = new Set((element[ElementProperty.INFO] as ElementInfo).flows
 			.flatMap(flow => flow.boxesInfo
 				.map(boxInfo => boxInfo.term.selector)
@@ -1602,19 +1602,19 @@ const cacheExtend = (element: Element, highlightTags: HighlightTags, cacheModify
 };
 
 const highlightingAttributesCleanup = (root: Element) => {
-	root.querySelectorAll("[markmysearch-h_id]").forEach(element => {
-		element.removeAttribute("markmysearch-h_id");
+	root.querySelectorAll("[style*='markmysearch-h_id']").forEach(element => {
+		element.setAttribute("style", (element.getAttribute("style") as string).replace(/markmysearch-h_id: \d+;/g, ""));
 	});
-	root.querySelectorAll("[markmysearch-h_beneath]").forEach(element => {
-		element.removeAttribute("markmysearch-h_beneath");
+	root.querySelectorAll("[style*='markmysearch-h_beneath']").forEach(element => {
+		element.setAttribute("style", (element.getAttribute("style") as string).replace(/markmysearch-h_beneath: 1;/g, ""));
 	});
 };
 
 const markElementsUpToHighlightable: (element: Element) => void = paintUsePaintingFallback
 	? () => undefined
 	: element => {
-		if (!element.hasAttribute("markmysearch-h_id") && !element.hasAttribute("markmysearch-h_beneath")) {
-			element.setAttribute("markmysearch-h_beneath", "");
+		if (!element.getAttribute("style")?.includes("markmysearch-h_id") && !element.getAttribute("style")?.includes("markmysearch-h_beneath")) {
+			element.setAttribute("style", (element.getAttribute("style") ?? "") + "markmysearch-h_beneath: 1;");
 			markElementsUpToHighlightable(element.parentElement as Element);
 		}
 	}
@@ -1707,7 +1707,7 @@ const flowCacheWithBoxesInfo = (terms: MatchTerms, textFlow: Array<Text>,
 				textStart = textEnd;
 				textEnd += node.length;
 			}
-			(node.parentElement as Element).setAttribute("markmysearch-h_beneath", ""); // TODO optimise?
+			(node.parentElement as Element).setAttribute("style", ((node.parentElement as Element).getAttribute("style") ?? "") + "markmysearch-h_beneath: 1;"); // TODO optimise?
 			// eslint-disable-next-line no-constant-condition
 			while (true) {
 				flow.boxesInfo.push({
@@ -1732,7 +1732,7 @@ const flowCacheWithBoxesInfo = (terms: MatchTerms, textFlow: Array<Text>,
 		if ((ancestorHighlightable[ElementProperty.INFO] as ElementInfo).id === "") {
 			const highlighting = ancestorHighlightable[ElementProperty.INFO] as ElementInfo;
 			highlighting.id = getHighlightingId.next().value;
-			ancestorHighlightable.setAttribute("markmysearch-h_id", highlighting.id);
+			ancestorHighlightable.setAttribute("style", (ancestorHighlightable.getAttribute("style") ?? "") + `markmysearch-h_id: ${highlighting.id};`);
 		}
 		markElementsUpToHighlightable(ancestor);
 	}
@@ -1818,7 +1818,7 @@ const boxesInfoCalculateForFlowOwnersFromContent = (terms: MatchTerms, element: 
  * @param root A root node under which to remove highlights.
  */
 const boxesInfoRemoveForTerms = (terms: MatchTerms = [], root: HTMLElement | DocumentFragment = document.body) => {
-	for (const element of Array.from(root.querySelectorAll("[markmysearch-h_id]"))) {
+	for (const element of Array.from(root.querySelectorAll("[style*='markmysearch-h_id']"))) {
 		const filterBoxesInfo = (element: Element) => {
 			const elementInfo = element[ElementProperty.INFO] as ElementInfo;
 			if (!elementInfo) {
@@ -1837,15 +1837,15 @@ const boxesInfoRemoveForTerms = (terms: MatchTerms = [], root: HTMLElement | Doc
 const constructHighlightStyleRule: (highlightId: string, boxes: Array<HighlightBox>, terms: MatchTerms) => string = paintUseExperimental
 	? paintUsePaintingFallback
 		? highlightId =>
-			`body [markmysearch-h_id="${highlightId}"] { background: -moz-element(#${
+			`body [style*="markmysearch-h_id: ${highlightId};"] { background: -moz-element(#${
 				getSel(ElementID.DRAW_ELEMENT, highlightId)
 			}) no-repeat !important; }`
 		: (highlightId, boxes) =>
-			`body [markmysearch-h_id="${highlightId}"] { --markmysearch-boxes: ${
+			`body [style*="markmysearch-h_id: ${highlightId};"] { --markmysearch-boxes: ${
 				JSON.stringify(boxes)
 			}; }`
 	: (highlightId, boxes, terms) =>
-		`#${getSel(ElementID.BAR)}.${getSel(ElementClass.HIGHLIGHTS_SHOWN)} ~ body [markmysearch-h_id="${highlightId}"] { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E${
+		`#${getSel(ElementID.BAR)}.${getSel(ElementClass.HIGHLIGHTS_SHOWN)} ~ body [style*="markmysearch-h_id: ${highlightId};"] { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E${
 			boxes.map(box =>
 				`%3Crect width='${box.width}' height='${box.height}' x='${box.x}' y='${box.y}' fill='hsl(${(
 					terms.find(term => term.selector === box.selector) as MatchTerm).hue
