@@ -85,6 +85,7 @@ const isTabSearchPage = async (engines: SearchSites, url: string): Promise<{ isS
 
 /**
  * Determines whether a URL is filtered in by a given URL filter.
+ * @deprecated This algorithm is flawed due to the use of \b instead of ^ and $ (start and end of line).
  * @param url A URL object.
  * @param urlFilter A URL filter array, the component strings of which may contain wildcards.
  * @returns `true` if the URL is filtered in, `false` otherwise.
@@ -96,12 +97,48 @@ const isUrlFilteredIn = (() => {
 
 	return (url: URL, urlFilter: URLFilter): boolean =>
 		!!urlFilter.find(({ hostname, pathname }) => (
-			(new RegExp(sanitize(hostname) + "\\b")).test(url.hostname)
+			(new RegExp(sanitize(hostname) + "\\b")).test(url.hostname + " ")
 			&& (pathname === ""
 				|| pathname === "/"
 				|| (new RegExp("\\b" + sanitize(pathname.slice(1)))).test(url.pathname.slice(1))
 			)
 		))
+	;
+})();
+
+/**
+ * Determines whether a URL is filtered in by a given URL filter.
+ * URL filter examples:
+ * 
+ * - Hostname:
+ *   - example.com: example.com and any subdomains
+ *   - .example.com: example.com only
+ *   - *.example.com: any subdomains of example.com
+ * - Pathname:
+ *   - /a/b: /a/b and anything below
+ *   - /a/b/: /a/b only
+ *   - /a/b/*: anything below /a/b/
+ *   - /a/*\/c: * represents any name
+ *   - /a/**\/x: ** represents any names separated by /
+ * 
+ * WARNING: This algorithm is not fully implemented.
+ * @param url A URL object.
+ * @param urlFilter A URL filter array.
+ * @returns `true` if the URL is filtered in, `false` otherwise.
+ */
+const isUrlFilteredInV2 = (() => {
+	const sanitize = (urlComponent: string) =>
+		sanitizeForRegex(urlComponent).replace("\\*", ".*")
+	;
+
+	return (url: URL, urlFilter: URLFilter): boolean =>
+		!!urlFilter.find(({ hostname, pathname }) =>
+			(new RegExp(sanitize(hostname) + "$")).test(url.hostname + " ")
+			&& (pathname === ""
+				|| pathname === "/"
+				|| (new RegExp("^" + sanitize(pathname.slice(1)))).test(url.pathname.slice(1))
+			)
+		)
 	;
 })();
 
