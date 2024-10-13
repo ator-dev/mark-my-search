@@ -85,6 +85,7 @@ enum StorageSession { // Keys assumed to be unique across all storage areas (exc
 enum StorageLocal {
 	ENABLED = "enabled",
 	PERSIST_RESEARCH_INSTANCES = "persistResearchInstances",
+	
 }
 
 enum StorageSync {
