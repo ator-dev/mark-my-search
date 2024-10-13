@@ -1,0 +1,97 @@
+.container-panel {
+	flex: 1 1 auto;
+	border-top: 2px ridge hsl(300 50% 30%);
+	border-top-left-radius: inherit;
+	overflow-y: auto;
+	outline: none;
+	background: hsl(300 16% 30%);
+}
+@supports (overflow-y: overlay) {
+	.container-panel {
+		overflow-y: overlay;
+	};
+}
+.container-panel > .panel {
+	display: none;
+	flex-direction: column;
+	gap: 1px;
+	border-radius: inherit;
+	background: hsl(0 0% 100% / 0.26);
+	box-shadow: 0 0 10px;
+}
+.container-panel > .panel, .brand {
+	margin-inline: max(0px, calc((100vw - 700px)/2));
+}
+/**/
+
+.panel .interaction
+	{ display: flex; flex-direction: column; padding-inline: 8px; padding-block: 4px; }
+.panel .list
+	{ display: flex; margin: 0; border: 0; }
+.panel .list.column
+	{ flex-direction: column; }
+.panel .list.row
+	{ flex-direction: row; gap: 8px; }
+.panel .list.row > *
+	{ flex: 1; }
+.panel .interaction.option
+	{ flex-direction: row; padding-block: 0; user-select: none; }
+.panel .interaction > *, .panel .organizer > *, .panel .term
+	{ margin-block: 2px; border-radius: 2px; padding-block: 4px; }
+.panel .interaction input[type="text"],
+.panel .interaction textarea,
+.panel .interaction .submitter
+	{ border: none; background: hsl(300 60% 16%); color: hsl(0 0% 90%); font-family: inherit; }
+.panel .interaction input[type="checkbox"]
+	{ align-self: center; }
+.panel .interaction:is(.action, .link, .organizer) > *
+	{ padding-block: 0; }
+.panel .interaction .label, .alert
+	{ color: hsl(300 0% 72%); }
+.panel .interaction.option label.label[for]:hover
+	{ color: hsl(300 0% 66%); }
+.panel .interaction .submitter
+	{ padding-block: 3px; }
+.panel .interaction .submitter:disabled
+	{ pointer-events: none; color: hsl(0 0% 60%); }
+.panel .interaction .alert,
+.panel .interaction .submitter
+	{ padding-inline: 2px; }
+.panel .interaction .submitter:hover
+	{ background: hsl(300 60% 20%); }
+.panel .interaction .submitter:active
+	{ background: hsl(300 60% 14%); }
+.panel .interaction .note
+	{ font-size: 14px; color: hsl(300 6% 54%); white-space: break-spaces; }
+.panel .interaction.option .label
+	{ flex: 1; }
+.panel .interaction.link a
+	{ color: hsl(200 100% 80%); }
+.panel .interaction.link a:visited
+	{ color: hsl(260 100% 80%); }
+.panel .interaction.link a:active
+	{ color: hsl(0 100% 60%); }
+/**/
+
+.panel .section > .title, .panel .section > .title-row > .title
+	{ margin: 4px; }
+.panel.panel-term_lists .section > .container
+	{ padding: 4px; }
+.panel.panel-term_lists .container-terms .term
+	{ display: flex; background: hsl(300 30% 15%); }
+.panel.panel-term_lists .container-terms .term .phrase-input
+	{ width: 120px; background: none; }
+.panel.panel-term_lists .container-terms .term .phrase-input:not(:focus, :hover, :placeholder-shown)
+	{ background-image: linear-gradient(90deg, hsl(0 0% 90%) 85%, transparent);
+	-webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.panel.panel-term_lists .container-terms .term .matching
+	{ flex: 1; height: auto; overflow-y: auto; }
+@supports (overflow-y: overlay)
+	{ .panel.panel-term_lists .container-terms .term .matching { overflow-y: overlay; }; }
+.panel.panel-term_lists .container-terms .term .matching .type
+	{ display: flex; }
+.panel.panel-term_lists .container-terms .term .matching .type .label
+	{ flex: 1; align-self: center; font-size: 12px; }
+.panel.panel-term_lists .container-urls .url-input
+	{ border: none; background: none; color: hsl(0 0% 90%); }
+/**/

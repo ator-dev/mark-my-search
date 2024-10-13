@@ -1,0 +1,420 @@
+:root {
+	--bg-D: hsl(0, 0%, 10.6%);
+	--color-D: hsl(0 0% 78%);
+	--color-dim-D: hsl(0, 0%, 66%);
+	--color-logo-title-D: hsl(0, 0%, 82%);
+	--color-h1-D: hsl(0, 0%, 82%);
+	--color-h2-D: hsl(0, 0%, 82%);
+	--color-h3-D: hsl(0, 0%, 82%);
+	--bg-header-D: hsl(300, 100%, 10%);
+	--border-header-D: hsl(300 40% 40%);
+	--color-info-D: hsl(0 0% 50%);
+	--color-info-hover-D: hsl(300 100% 34%);
+	--outline-info-details-D: hsl(0 0% 60%);
+	--color-info-details-D: hsl(0 0% 0%);
+	--border-bubble-D: hsl(0 0% 64%);
+	--bg-keyboard: var(--bg);
+	--color-keyboard: var(--color-dim);
+	--border-keyboard: var(--color-dim);
+	--bg-nav-button: var(--bg);
+	--border-nav-button: var(--border-header);
+	--bg-selected: hsl(300 50% 70%);
+	--color-selected: hsl(0 0% 0%);
+}
+
+:root, :root:has(#theme-light:checked) {
+	color-scheme: light;
+	--bg: hsl(0 0% 98%);
+	--color: hsl(0 0% 0%);
+	--color-dim: hsl(0 0% 30%);
+	--color-logo-title: hsl(0 0% 20%);
+	--color-h1: hsl(0 0% 20%);
+	--color-h2: hsl(0 0% 20%);
+	--color-h3: hsl(0, 0%, 32%);
+	--bg-header: hsl(300 100% 98%);
+	--border-header: hsl(300 100% 88%);
+	--color-info: hsl(0 0% 50%);
+	--color-info-hover: hsl(300 100% 34%);
+	--outline-info-details: hsl(0 0% 60%);
+	--color-info-details: hsl(0 0% 0%);
+	--border-bubble: hsl(0 0% 64%);
+}
+
+:root:has(#theme-dark:checked) {
+	color-scheme: dark;
+	--bg: var(--bg-D);
+	--color: var(--color-D);
+	--color-dim: var(--color-dim-D);
+	--color-logo-title: var(--color-logo-title-D);
+	--color-h1: var(--color-h1-D);
+	--color-h2: var(--color-h2-D);
+	--color-h3: var(--color-h3-D);
+	--bg-header: var(--bg-header-D);
+	--border-header: var(--border-header-D);
+	--color-info: var(--color-info-D);
+	--color-info-hover: var(--color-info-hover-D);
+	--outline-info-details: var(--outline-info-details-D);
+	--color-info-details: var(--color-info-details-D);
+	--border-bubble: var(--border-bubble-D);
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		color-scheme: dark;
+		--bg: var(--bg-D);
+		--color: var(--color-D);
+		--color-dim: var(--color-dim-D);
+		--color-logo-title: var(--color-logo-title-D);
+		--color-h1: var(--color-h1-D);
+		--color-h2: var(--color-h2-D);
+		--color-h3: var(--color-h3-D);
+		--bg-header: var(--bg-header-D);
+		--border-header: var(--border-header-D);
+		--color-info: var(--color-info-D);
+		--color-info-hover: var(--color-info-hover-D);
+		--outline-info-details: var(--outline-info-details-D);
+		--color-info-details: var(--color-info-details-D);
+		--border-bubble: var(--border-bubble-D);
+	}
+}
+
+:root {
+	font-family: "Arial", sans-serif;
+	background: var(--bg);
+	color: var(--color);
+}
+
+body {
+	margin: 0;
+}
+
+#header {
+	& {
+		display: flex;
+		overflow-y: visible; /* Ensure that dropdowns can drop below the header. */
+		background: var(--bg-header);
+		border-bottom: 1px solid var(--border-header);
+		position: sticky;
+		top: 0;
+		z-index: 1;
+	}
+
+	& > * {
+		margin-inline: 10px;
+	}
+
+	& .brand {
+		display: flex;
+	}
+
+	& .controls {
+		display: flex;
+		flex-grow: 1;
+		align-items: center;
+	}
+
+	& nav {
+		display: flex;
+		position: relative;
+		flex-grow: 1;
+		gap: 20px;
+		align-items: center;
+	}
+
+	& nav a {
+		display: block;
+		padding: 12px;
+		background: var(--bg-nav-button);
+		border: 2px solid var(--border-nav-button);
+		border-radius: calc(infinity * 1px);
+	}
+
+	& nav a[href^="#"] {
+		padding: 8px;
+		border-width: 1px;
+		border-radius: 0;
+	}
+
+	& nav a.hidden {
+		position: absolute;
+	}
+
+	& nav a.hidden:not(:focus) {
+		opacity: 0;
+		pointer-events: none;
+	}
+
+	& nav div {
+		position: relative;
+	}
+
+	& .menu:focus-within fieldset, & .menu fieldset:active, & .menu fieldset:hover {
+		display: flex;
+	}
+
+	& .menu fieldset {
+		display: none;
+		flex-direction: column;
+		gap: 2px;
+		position: absolute;
+		width: 100%;
+		top: calc(100% - 2px);
+		left: 0;
+		box-sizing: border-box;
+		margin: 0;
+		padding: 0;
+		border: 2px solid var(--border-nav-button);
+		border-top: none;
+		background: var(--bg);
+	}
+
+	& .menu fieldset legend {
+		display: none;
+	}
+
+	& .menu fieldset input {
+		position: absolute;
+		opacity: 0;
+	}
+
+	& .menu fieldset label {
+		display: block;
+		margin: 1px;
+		padding: 2px;
+	}
+
+	& .menu fieldset input:checked + label {
+		background: var(--bg-selected);
+		color: var(--color-selected);
+	}
+
+	& .menu fieldset input:focus + label {
+		outline: 2px solid var(--bg-selected);
+		outline-offset: 1px;
+	}
+
+	& .logo-icon {
+		width: 38px;
+		margin-right: 10px;
+		padding-bottom: 10px;
+	}
+}
+
+.logo-title {
+	margin-block: 0.4em;
+	white-space: nowrap;
+	font-size: 2em;
+	font-weight: normal;
+	text-decoration: none;
+	color: var(--color);
+}
+
+/* Alternate stacked header layout for narrow screens */
+@media (max-width: 700px) {
+	#header {
+		& {
+			flex-direction: column;
+		}
+
+		& nav {
+			margin-inline: 0;
+			padding-block: 4px;
+			gap: 10px;
+		}
+
+		& nav a {
+			padding: 8px;
+		}
+
+		& .logo-icon {
+			padding-bottom: 0;
+		}
+
+		& .logo-title {
+			margin-block-start: 0.5em;
+			margin-block-end: 0.2em;
+			font-size: 24px;
+		}
+	}
+}
+
+#main-container {
+	display: flex;
+}
+
+#main-container .sidebar {
+	flex-grow: 1;
+}
+
+#main {
+	width: 1200px;
+	margin-inline: 10px;
+	font-size: 20px;
+}
+
+h1 {
+	color: var(--color-h1);
+}
+
+h2 {
+	color: var(--color-h2);
+}
+
+h3 {
+	color: var(--color-h3);
+}
+
+input.info {
+	& {
+		display: inline-block;
+		position: relative;
+		margin-inline: 0.3em;
+		width: 1.2em;
+		height: 1.2em;
+		border: none;
+		border-radius: 1em;
+		text-align: center;
+		font-weight: bold;
+		background: none;
+		color: var(--color-info);
+		appearance: none; /* Remove checkbox appearance for custom styling - may only work in newest browsers */
+	}
+
+	&:not(:focus-visible) {
+		outline: 1px solid;
+	}
+
+	&:hover {
+		color: var(--color-info-hover);
+	}
+
+	&::before {
+		content: "?";
+	}
+
+	&:checked::after {
+		content: "";
+		position: absolute;
+		border-bottom: 0.8em solid var(--outline-info-details);
+		border-left: 0.8em solid transparent;
+		border-right: 0.8em solid transparent;
+		top: 1.2em;
+		left: -0.2em;
+	}
+}
+
+.info.details {
+	display: none;
+}
+
+input.info:checked + .info.details {
+	display: block;
+	float: right;
+	box-sizing: border-box;
+	width: 100%;
+	padding: 0.8em;
+	margin-block: 0.5em;
+	background: Canvas;
+	outline: 1px solid var(--outline-info-details);
+	color: var(--color-info-details);
+}
+
+kbd {
+	padding-inline: 3px;
+	padding-block: 1px;
+	border: 1px solid var(--border-keyboard);
+	border-radius: 6px;
+	background: var(--bg-keyboard);
+	box-shadow: 0 2px 0 0 var(--border-keyboard);
+	color: var(--color-keyboard);
+}
+
+p.hotkey {
+	font-size: 2em;
+}
+
+p.hotkey kbd {
+	padding: 0.2em;
+}
+
+.toolbar-button {
+	display: inline-block;
+	vertical-align: bottom;
+	height: 1em;
+	padding: 0.1em;
+	margin-inline: 0.1em;
+	border-radius: 0.2em;
+	background: hsl(0 0% 90% / 0.8);
+	box-shadow: 0 1px 4px;
+	color: black;
+}
+
+.toolbar-button img {
+	height: 1em;
+	aspect-ratio: 1;
+}
+
+mark {
+	background: hsl(300 100% 60% / 0.4);
+	box-shadow: 0 0 0 1px hsl(300 100% 20% / 0.35);
+	color: inherit;
+}
+
+.setting {
+	& {
+		display: flex;
+		align-items: center;
+		margin-block: 0.4em;
+	}
+	
+	& > .toolbar-button {
+		margin-right: 0.4em;
+	}
+
+	& input[type="checkbox"] {
+		height: 0.8em;
+		aspect-ratio: 1;
+		font-size: inherit;
+	}
+
+	& input[type="number"],
+	& input[type="text"] {
+		width: 6em;
+		font-size: 0.8em;
+		vertical-align: bottom;
+	}
+
+	& [data-unit]::after {
+		content: attr(data-unit);
+		color: var(--color-dim);
+	}
+
+	& label:first-child {
+		margin-right: 0.3em;
+	}
+
+	& :is(input, [data-unit]) ~ label {
+		margin-left: 0.5em;
+	}
+
+	/* TODO use .input in many cases (e.g. .input:has([type="number"] + ...) */
+	/* TODO show unit regardless of HTML element order */
+	/* TODO align inputs on right of label to the right */
+}
+
+p.setting {
+	display: flex;
+	align-items: center;
+	font-size: 1.2em;
+}
+
+.image-placeholder {
+	font-style: italic;
+	color: grey;
+}
+.image-placeholder::before {
+	content: "[";
+}
+.image-placeholder::after {
+	content: "]";
+}
