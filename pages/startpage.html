@@ -5,18 +5,124 @@ Licensed under the EUPL-1.2-or-later.
 -->
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8">
-	</head>
-	<body>
-		<script src="/dist/include/utility.js"></script>
-		<script src="/dist/include/pattern-stem.js"></script>
-		<script src="/dist/include/pattern-diacritic.js"></script>
-		<script src="/dist/include/util-privileged.js"></script>
-		<script src="/dist/include/storage.js"></script>
-		<script src="/lib/email.min.js"></script>
-		<script src="/dist/include/page-build.js"></script>
-		<script src="/dist/pages/startpage-build.js"></script>
-		<script src="/dist/content.js"></script>
-	</body>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Start (Mark My Search)</title>
+	<link rel="icon" href="/icons/mms.svg" sizes="any">
+	<link rel="stylesheet" href="/pages/style/main.css">
+	<link rel="stylesheet" href="/pages/style/variant/docs.css">
+</head>
+<body>
+	<header id="header">
+		<div class="brand">
+			<img class="logo-icon" src="/icons/mms.svg">
+			<a class="logo-title" href="https://markmysearch.ator.systems">Mark My Search</a>
+		</div>
+		<div class="controls">
+			<nav>
+				<a href="#main" class="hidden">Skip navigation</a>
+				<a href="/pages/startpage.html">Start</a>
+				<a href="/pages/options.html">Settings</a>
+				<div class="menu">
+					<a href="#theme">Set theme</a>
+					<fieldset>
+						<legend>Select a site theme</legend>
+						<input type="radio" id="theme-light" name="theme">
+						<label for="theme-light">Light</label>
+						<input type="radio" id="theme" name="theme" checked="">
+						<label for="theme">Automatic</label>
+						<input type="radio" id="theme-dark" name="theme">
+						<label for="theme-dark">Dark</label>
+					</fieldset>
+				</div>
+			</nav>
+		</div>
+	</header>
+	<div id="main-container">
+		<div class="sidebar"></div>
+		<main id="main">
+			<h1>
+				Start page
+			</h1>
+			<p>
+				Confused? Annoyed? <strong>Return to Start.</strong>
+			</p>
+			<p class="image-placeholder">Toolbar on zoomed-in page, annotated</p>
+			<h2>
+				How to find-in-page
+			</h2>
+			<p class="hotkey">
+				<kbd>Alt</kbd> + <kbd>M</kbd>
+			</p>
+			<p>
+				Summon or dismiss Mark My Search using the key combo above.
+			</p>
+			<p class="image-placeholder">Toolbar</p>
+			<p>
+				The toolbar will appear and stay on the page until dismissed.
+			</p>
+			<h3>
+				Adding keywords to highlight
+			</h3>
+			<p>
+				If the
+				<span class="toolbar-button"><img src="/icons/create.svg" alt="Add Keyword"></span>
+				button is not open, press it to get a text field.
+				After typing a keyword to <mark>highlight</mark>, tap <kbd>Enter</kbd>.
+			</p>
+			<p class="image-placeholder">Page w/ highlighting</p>
+			<p>
+				To close the text field, click somewhere else or tap <kbd>Escape</kbd>.
+			</p>
+			<h3>
+				Editing keywords
+			</h3>
+			<p>
+				Press
+				<span class="toolbar-button"><img src="/icons/edit.svg" alt="Edit Keyword"></span>
+				to re-open the keyword's text field.
+				Type anything and press <kbd>Enter</kbd> to change the keyword.
+			</p>
+			<p>
+				While the text field is open, you can press
+				<span class="toolbar-button"><img src="/icons/delete.svg" alt="Remove Keyword"></span>
+				to bin the keyword.
+			</p>
+			<p class="image-placeholder">Keyword in the toolbar, annotated</p>
+			<h2>
+				Highlight automatically when searching the web
+			</h2>
+			<p class="setting">
+				<label for="detect-search-engines">Enabled:</label>
+				<input type="checkbox" id="detect-search-engines">
+			</p>
+			<p>
+				Searching the web will summon Mark My Search automatically.
+				All of your search terms will be highlighted, as if you had added them to the toolbar.
+			</p>
+			<p class="image-placeholder">Toolbar on mock web results</p>
+			<p>
+				You can still add, edit, or bin any keyword.
+			</p>
+			<h2>
+				Highlight a defined set of keywords
+			</h2>
+			<h2>
+				Problem solving
+			</h2>
+		</main>
+		<div class="sidebar"></div>
+	</div>
+	<script src="/dist/theme-loader.js"></script>
+	<script src="/dist/include/utility.js"></script>
+	<script src="/dist/include/pattern-stem.js"></script>
+	<script src="/dist/include/pattern-diacritic.js"></script>
+	<script src="/dist/include/util-privileged.js"></script>
+	<script src="/dist/include/storage.js"></script>
+	<script src="/lib/email.min.js"></script>
+	<!--<script src="/dist/include/page-build.js"></script>-->
+	<!--<script src="/dist/pages/startpage.js"></script>-->
+	<script src="/dist/content.js"></script>
+</body>
 </html>

@@ -1,0 +1,3 @@
+.section:not(:has(:target)) {
+	display: none;
+}
