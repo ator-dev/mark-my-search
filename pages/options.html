@@ -46,11 +46,38 @@ Licensed under the EUPL-1.2-or-later.
 			</h2>
 			<ul>
 				<li>
+					<a href="#section--summoning">Summoning</a>
+				</li>
+				<li>
 					<a href="#section--toolbar">Toolbar</a>
+				</li>
+				<li>
+					<a href="#section--highlighting">Highlighting</a>
+				</li>
+				<li>
+					<a href="#section--website-exclusions">Website exclusions</a>
+				</li>
+				<li>
+					<a href="#section--search-highlighting">Search highlighting</a>
+				</li>
+				<li>
+					<a href="#section--keyword-lists">Automation</a>
 				</li>
 			</ul>
 		</nav>
 		<main id="main">
+			<section class="section">
+				<h1 id="section--summoning">
+					Summoning
+				</h1>
+				<div class="setting-list">
+					<span><input id="setting--summoning-restore-keywords" type="checkbox"></span>
+					<span><label for="setting--summoning-restore-keywords">
+						Restore the tab's last keywords when summoned
+					</label></span>
+				</div>
+				<p class="image-placeholder">Web search demo</p>
+			</section>
 			<section class="section">
 				<h1 id="section--toolbar">
 					Toolbar
@@ -144,6 +171,44 @@ Licensed under the EUPL-1.2-or-later.
 						</label></span>
 					</div>
 					<p class="image-placeholder">Toolbar w/ current controls</p>
+				</section>
+			</section>
+			<section class="section">
+				<h1 id="section--highlighting">
+					Highlighting
+				</h1>
+				<section class="group">
+					<hgroup>
+						<h2 id="group--highlighting-style">
+							Style
+						</h2>
+						<p>
+							How should the highlighting look?
+						</p>
+					</hgroup>
+					<div class="setting-list">
+						<span><input id="setting--highlighting-hues" type="text"></span>
+						<span><label for="setting--highlighting-hues">
+							Highlight colour hue values
+						</label></span>
+					</div>
+					<p class="image-placeholder">Toolbar w/ keywords w/ highlight colours</p>
+				</section>
+				<section class="group">
+					<hgroup>
+						<h2 id="group--highlighting-algorithm">
+							Algorithm (advanced)
+						</h2>
+						<p>
+							How should highlighting be computed?
+						</p>
+					</hgroup>
+					<div class="setting-list">
+						<span><select id="setting--highlighting-engine"></select></span>
+						<span><label for="setting--highlighting-engine">
+							Highlighting engine
+						</label></span>
+					</div>
 				</section>
 			</section>
 		</main>
