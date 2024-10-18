@@ -360,15 +360,18 @@ mark {
 	color: inherit;
 }
 
-.setting {
+.setting-list {
 	& {
-		display: flex;
-		align-items: center;
-		margin-block: 0.4em;
+		display: grid;
+		grid-template-columns: min-content auto;
+		margin-block: 1em;
+		grid-row-gap: 0.4em;
+		padding-inline-start: 40px;
+		grid-column-gap: 14px;
 	}
-	
-	& > .toolbar-button {
-		margin-right: 0.4em;
+
+	& > * {
+		white-space: nowrap;
 	}
 
 	& input[type="checkbox"] {
@@ -379,27 +382,23 @@ mark {
 
 	& input[type="number"],
 	& input[type="text"] {
-		width: 6em;
-		font-size: 0.8em;
+		width: 8em;
+		padding-block: 0;
+		font-size: 0.9em;
 		vertical-align: bottom;
+	}
+
+	& input[type="number"] {
+		width: 4em;
 	}
 
 	& [data-unit]::after {
 		content: attr(data-unit);
+		font-size: 0.9em;
 		color: var(--color-dim);
 	}
 
-	& label:first-child {
-		margin-right: 0.3em;
-	}
-
-	& :is(input, [data-unit]) ~ label {
-		margin-left: 0.5em;
-	}
-
 	/* TODO use .input in many cases (e.g. .input:has([type="number"] + ...) */
-	/* TODO show unit regardless of HTML element order */
-	/* TODO align inputs on right of label to the right */
 }
 
 p.setting {
