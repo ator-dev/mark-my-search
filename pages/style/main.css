@@ -243,7 +243,7 @@ body {
 }
 
 #main-container .sidebar {
-	flex-grow: 1;
+	flex: 1;
 }
 
 #main {
@@ -370,10 +370,6 @@ mark {
 		grid-column-gap: 14px;
 	}
 
-	& > * {
-		white-space: nowrap;
-	}
-
 	& input[type="checkbox"] {
 		height: 0.8em;
 		aspect-ratio: 1;
@@ -392,13 +388,15 @@ mark {
 		width: 4em;
 	}
 
+	& [data-unit] {
+		white-space: nowrap;
+	}
+
 	& [data-unit]::after {
 		content: attr(data-unit);
 		font-size: 0.9em;
 		color: var(--color-dim);
 	}
-
-	/* TODO use .input in many cases (e.g. .input:has([type="number"] + ...) */
 }
 
 p.setting {
