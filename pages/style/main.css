@@ -214,7 +214,6 @@ body {
 		}
 
 		& nav {
-			margin-inline: 0;
 			padding-block: 4px;
 			gap: 10px;
 		}
@@ -244,20 +243,28 @@ body {
 		flex: 1;
 	}
 
-	&:first-child {
+	&:first-child .sidebar-content {
 		padding-left: 20px;
 	}
 
-	&:last-child {
+	&:last-child .sidebar-content {
 		padding-right: 20px;
 	}
 }
 
-nav.sidebar {
+.sidebar-filled {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
 	border-right: 1px solid var(--border-header);
+	background: var(--bg-header);
 }
 
-nav.sidebar .tab-list {
+.sidebar-filled > .sidebar-content {
+	flex: 1;
+}
+
+.sidebar-filled .tab-list {
 	& {
 		padding: 0;
 	}
@@ -275,6 +282,7 @@ nav.sidebar .tab-list {
 		padding-block: 8px;
 		padding-inline: 0.5em;
 		box-sizing: border-box;
+		white-space: nowrap;
 		border: 1px solid var(--border-header);
 		background: var(--bg);
 	}
