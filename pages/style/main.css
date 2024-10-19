@@ -284,6 +284,10 @@ body {
 		box-sizing: border-box;
 		white-space: nowrap;
 		border: 1px solid var(--border-header);
+	}
+
+	& li a.active {
+		border-right: var(--bg);
 		background: var(--bg);
 	}
 }
