@@ -108,15 +108,12 @@ body {
 	}
 
 	& .controls {
-		display: flex;
-		flex-grow: 1;
-		align-items: center;
+		flex: 1;
 	}
 
 	& nav {
 		display: flex;
 		position: relative;
-		flex-grow: 1;
 		gap: 20px;
 		align-items: center;
 	}
