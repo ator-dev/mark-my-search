@@ -396,7 +396,7 @@ p.hotkey kbd {
 	margin-inline: 0.1em;
 	border-radius: 0.2em;
 	background: hsl(0 0% 90% / 0.8);
-	box-shadow: 0 1px 4px;
+	box-shadow: 1px 1px 1px;
 	color: black;
 }
 
@@ -416,9 +416,9 @@ mark {
 		display: grid;
 		grid-template-columns: min-content auto;
 		margin-block: 1em;
-		grid-row-gap: 0.4em;
+		row-gap: 0.4em;
 		padding-inline-start: 40px;
-		grid-column-gap: 14px;
+		column-gap: 14px;
 	}
 
 	& input[type="checkbox"] {
@@ -447,6 +447,19 @@ mark {
 		content: attr(data-unit);
 		font-size: 0.9em;
 		color: var(--color-dim);
+	}
+}
+
+@media (max-width: 1000px) {
+	.setting-list {
+		padding-inline-start: 20px;
+	}
+}
+
+@media (max-width: 700px) {
+	.setting-list {
+		padding-inline-start: 10px;
+		column-gap: 10px;
 	}
 }
 
