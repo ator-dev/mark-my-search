@@ -79,6 +79,7 @@
 }
 
 :root {
+	font-size: 16px;
 	font-family: "Arial", sans-serif;
 	background: var(--bg);
 	color: var(--color);
@@ -229,7 +230,7 @@ body {
 		& .logo-title {
 			margin-block-start: 0.5em;
 			margin-block-end: 0.2em;
-			font-size: 24px;
+			font-size: 1.5em;
 		}
 	}
 }
@@ -295,7 +296,7 @@ body {
 #main {
 	width: 1200px;
 	padding-inline: 20px;
-	font-size: 20px;
+	font-size: 1.2em;
 }
 
 h1 {
