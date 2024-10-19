@@ -24,3 +24,28 @@ for (const checkbox of document.querySelectorAll<HTMLInputElement>("input[name='
 		}
 	});
 }
+
+const activateCurrentTab = (currentUrl: URL) => {
+	const id = currentUrl.hash.slice(1);
+	for (const activeTab of document.querySelectorAll(".tab-list .active")) {
+		activeTab.classList.remove("active");
+	}
+	if (id.length === 0) {
+		return;
+	}
+	const heading = document.getElementById(id)?.closest(".section")?.querySelector("h2");
+	if (!heading) {
+		return;
+	}
+	const tab = document.querySelector(`.tab-list a[href="#${heading.id}"]`);
+	if (!tab) {
+		return;
+	}
+	tab.classList.add("active");
+};
+
+addEventListener("hashchange", event => {
+	activateCurrentTab(new URL(event.newURL));
+});
+
+activateCurrentTab(new URL(location.href));
