@@ -1,3 +1,7 @@
+if (new URL(location.href).searchParams.get("frame") !== null) {
+	document.body.classList.add("frame");
+}
+
 const loadTheme = (theme: string) => {
 	const checkbox = document.getElementById("theme-" + theme) as HTMLInputElement | null;
 	if (checkbox) {
@@ -25,7 +29,7 @@ for (const checkbox of document.querySelectorAll<HTMLInputElement>("input[name='
 	});
 }
 
-const activateCurrentTab = (currentUrl: URL) => {
+const activateCurrentTab = (currentUrl: Location) => {
 	const id = currentUrl.hash.slice(1);
 	for (const activeTab of document.querySelectorAll(".tab-list .active")) {
 		activeTab.classList.remove("active");
@@ -44,8 +48,8 @@ const activateCurrentTab = (currentUrl: URL) => {
 	tab.classList.add("active");
 };
 
-addEventListener("hashchange", event => {
-	activateCurrentTab(new URL(event.newURL));
+addEventListener("hashchange", () => {
+	activateCurrentTab(location);
 });
 
-activateCurrentTab(new URL(location.href));
+activateCurrentTab(location);

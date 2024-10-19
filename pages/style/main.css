@@ -299,6 +299,10 @@ body {
 	font-size: 1.2em;
 }
 
+.frame #main {
+	font-size: inherit;
+}
+
 h1 {
 	color: var(--color-h1);
 }
