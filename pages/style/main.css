@@ -1,5 +1,5 @@
 :root {
-	--bg-D: hsl(0, 0%, 10.6%);
+	--bg-D: #1c1b22 /* Background color of Firefox's add-on manager. */;
 	--color-D: hsl(0 0% 78%);
 	--color-dim-D: hsl(0, 0%, 66%);
 	--color-logo-title-D: hsl(0, 0%, 82%);
@@ -24,7 +24,7 @@
 
 :root, :root:has(#theme-light:checked) {
 	color-scheme: light;
-	--bg: hsl(0 0% 98%);
+	--bg: hsl(0 0% 100%);
 	--color: hsl(0 0% 0%);
 	--color-dim: hsl(0 0% 30%);
 	--color-logo-title: hsl(0 0% 20%);
@@ -92,7 +92,7 @@ body {
 #header {
 	& {
 		display: flex;
-		overflow-y: visible; /* Ensure that dropdowns can drop below the header. */
+		overflow-y: visible /* Ensure that dropdowns can drop below the header. */;
 		background: var(--bg-header);
 		border-bottom: 1px solid var(--border-header);
 		position: sticky;
@@ -328,7 +328,7 @@ input.info {
 		font-weight: bold;
 		background: none;
 		color: var(--color-info);
-		appearance: none; /* Remove checkbox appearance for custom styling - may only work in newest browsers */
+		appearance: none /* Remove checkbox appearance for custom styling - may only work in newest browsers */;
 	}
 
 	&:not(:focus-visible) {
