@@ -21,19 +21,20 @@ chrome.storage.local.get("theme_temporary").then(local => {
 	}
 });
 
-for (const checkbox of document.querySelectorAll<HTMLInputElement>("input[name='theme']")) {
-	checkbox.addEventListener("change", () => {
-		if (checkbox.checked) {
-			if (checkbox.id === "theme") {
+addEventListener("input", event => {
+	const input = event.target;
+	if (input instanceof HTMLInputElement && input.getAttribute("name") === "theme") {
+		if (input.checked) {
+			if (input.id === "theme") {
 				chrome.storage.local.remove("theme_temporary");
 			} else {
 				chrome.storage.local.set({
-					theme_temporary: checkbox.id.slice(checkbox.id.indexOf("-") + 1),
+					theme_temporary: input.id.slice(input.id.indexOf("-") + 1),
 				});
 			}
 		}
-	});
-}
+	}
+});
 
 const activateCurrentTab = (currentUrl: Location) => {
 	const id = currentUrl.hash.slice(1);
