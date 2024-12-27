@@ -455,7 +455,8 @@ mark {
 		margin-bottom: 0.3em;
 	}
 
-	& input[type="checkbox"] {
+	& input[type="checkbox"],
+	& input[type="radio"] {
 		height: 1em;
 		aspect-ratio: 1;
 		font-size: inherit;

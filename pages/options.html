@@ -264,37 +264,62 @@ Licensed under the EUPL-1.2-or-later.
 							<div class="note">
 								e.g. <u><i>https://google.com/search?<strong>q=keyword</strong></i></u>
 								<br>
-								<strong><i>q</i></strong> is the search parameter, <strong><i>keyword</i></strong> is the search
+								<strong><i>q</i></strong> is the search parameter, <strong><i>keyword</i></strong> is the search.
 							</div>
 						</span>
 					</div>
 				</section>
 				<section class="group">
 					<hgroup>
-						<h3 id="group--search-highlighting-display">
-							Configuration
+						<h3 id="group--search-highlighting-highlights">
+							Highlights
 						</h3>
 					</hgroup>
-					<div class="setting-list rows">
-						<div>
-							<div class="setting-label-row"><label for="setting--search-highlighting-visibility">
-								Highlight visibility:
-							</label></div>
-							<div><select id="setting--search-highlighting-visibility">
-								<option value="" selected="">Show immediately</option>
-								<option value="">Hide until toggled</option>
-								<option value="">Show for search results, then hide</option>
-							</select></div>
-						</div>
-						<div>
-							<div class="setting-label-row"><label for="setting--search-highlighting-toolbar-collapsing">
-								Toolbar collapsing:
-							</label></div>
-							<div><select id="setting--search-highlighting-toolbar-collapsing">
-								<option value="">Collapse immediately</option>
-								<option value="" selected="">Do not collapse</option>
-							</select></div>
-						</div>
+					<div class="setting-list">
+						<span><input
+							id="setting--search-highlighting-visibility--show"
+							name="setting--search-highlighting-visibility"
+							type="radio" checked=""></span>
+						<span class="setting-label-row"><label for="setting--search-highlighting-visibility--show">
+							Shown
+						</label></span>
+						<span><input
+							id="setting--search-highlighting-visibility--hide"
+							name="setting--search-highlighting-visibility"
+							type="radio"></span>
+						<span class="setting-label-row"><label for="setting--search-highlighting-visibility--hide">
+							Hidden
+						</label></span>
+						<span><input
+							id="setting--search-highlighting-visibility--hide-show"
+							name="setting--search-highlighting-visibility"
+							type="radio"></span>
+						<span class="setting-label-row"><label for="setting--search-highlighting-visibility--hide-show">
+							Hidden until leaving search results
+						</label></span>
+					</div>
+				</section>
+				<section class="group">
+					<hgroup>
+						<h3 id="group--search-highlighting-toolbar">
+							Toolbar
+						</h3>
+					</hgroup>
+					<div class="setting-list">
+						<span><input
+							id="setting--search-highlighting-toolbar-collapsing--expand"
+							name="setting--search-highlighting-toolbar-collapsing"
+							type="radio" checked=""></span>
+						<span class="setting-label-row"><label for="setting--search-highlighting-toolbar-collapsing--expand">
+							Expanded
+						</label></span>
+						<span><input
+							id="setting--search-highlighting-toolbar-collapsing--collapse"
+							name="setting--search-highlighting-toolbar-collapsing"
+							type="radio"></span>
+						<span class="setting-label-row"><label for="setting--search-highlighting-toolbar-collapsing--collapse">
+							Collapsed
+						</label></span>
 					</div>
 				</section>
 				<section class="group">
