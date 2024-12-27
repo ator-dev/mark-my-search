@@ -4,14 +4,16 @@ Copyright © 2021-present ‘ator-dev’, Mark My Search contributors.
 Licensed under the EUPL-1.2-or-later.
 -->
 <!DOCTYPE html>
-<html>
+<html lang="en-GB">
 <head>
+	<meta http-equiv="content-security-policy" content="default-src https:">
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Settings (Mark My Search)</title>
 	<link rel="icon" href="/icons/mms.svg" sizes="any">
-	<link rel="stylesheet" href="/pages/style/main.css">
-	<link rel="stylesheet" href="/pages/style/variant/settings.css">
+	<link rel="stylesheet" href="style/main.css">
+	<link rel="stylesheet" href="style/variant/settings.css">
+	<link rel="stylesheet" href="style/experiment-specific.css">
 </head>
 <body>
 	<header id="header">
@@ -22,7 +24,7 @@ Licensed under the EUPL-1.2-or-later.
 		<nav class="controls">
 			<a href="#main" class="hidden">Skip navigation</a>
 			<a href="/pages/startpage.html">Start</a>
-			<a href="/pages/options.html">Settings</a>
+			<a href="">Settings</a>
 			<div class="menu">
 				<a href="#theme">Set theme</a>
 				<fieldset>
@@ -57,7 +59,7 @@ Licensed under the EUPL-1.2-or-later.
 						<a href="#section--website-exclusions">Website exclusions</a>
 					</li>
 					<li>
-						<a href="#section--search-highlighting">Search highlighting</a>
+						<a href="#section--search-highlighting">Web search auto-highlight</a>
 					</li>
 					<li>
 						<a href="#section--keyword-lists">Automation</a>
@@ -71,7 +73,7 @@ Licensed under the EUPL-1.2-or-later.
 					Summoning
 				</h2>
 				<div class="setting-list">
-					<span><input id="setting--summoning-restore-keywords" type="checkbox"></span>
+					<span><input id="setting--summoning-restore-keywords" type="checkbox" checked=""></span>
 					<span><label for="setting--summoning-restore-keywords">
 						Restore the tab's last keywords when summoned
 					</label></span>
@@ -84,15 +86,44 @@ Licensed under the EUPL-1.2-or-later.
 				</h2>
 				<section class="group">
 					<hgroup>
+						<h3 id="group--toolbar-style">
+							Style
+						</h3>
+						<p>
+							How should the toolbar look?
+						</p>
+					</hgroup>
+					<div class="setting-list">
+						<span data-unit="px"><input id="setting--toolbar-font-size" type="number" min="0" value="15"></span>
+						<span><label for="setting--toolbar-font-size">
+							Font size
+						</label></span>
+						<span><input id="setting--toolbar-keyword-opacity" type="number" min="0" max="1" step="0.1" value="0.86"></span>
+						<span><label for="setting--toolbar-keyword-opacity">
+							Opacity of keyword buttons
+						</label></span>
+						<span><input id="setting--toolbar-control-opacity" type="number" min="0" max="1" step="0.1" value="0.8"></span>
+						<span><label for="setting--toolbar-control-opacity">
+							Opacity of other buttons
+						</label></span>
+						<span data-unit="px"><input id="setting--toolbar-corner-radius" type="number" min="0" value="4"></span>
+						<span><label for="setting--toolbar-corner-radius">
+							Radius of rounded corners
+						</label></span>
+					</div>
+					<p class="image-placeholder">Toolbar w/ current controls</p>
+				</section>
+				<section class="group">
+					<hgroup>
 						<h3 id="group--toolbar-controls">
-							Controls
+							Toolbar buttons
 						</h3>
 						<p>
 							What controls should appear in the toolbar?
 						</p>
 					</hgroup>
 					<div class="setting-list">
-						<span><input id="setting--toolbar-control--dismiss" type="checkbox"></span>
+						<span><input id="setting--toolbar-control--dismiss" type="checkbox" checked=""></span>
 						<span><label for="setting--toolbar-control--dismiss">
 							<span class="toolbar-button"><img src="/icons/close.svg" alt="Dismiss From Tab"></span>
 							Dismiss from the current tab
@@ -102,17 +133,17 @@ Licensed under the EUPL-1.2-or-later.
 							<span class="toolbar-button"><img src="/icons/search.svg" alt="Look Up Keywords"></span>
 							Perform a search using the current keywords
 						</label></span>
-						<span><input id="setting--toolbar-control--toggle-highlight-display" type="checkbox"></span>
+						<span><input id="setting--toolbar-control--toggle-highlight-display" type="checkbox" checked=""></span>
 						<span><label for="setting--toolbar-control--toggle-highlight-display">
 							<span class="toolbar-button"><img src="/icons/show.svg" alt="Show/Hide Highlighting"></span>
 							Toggle display of highlighting
 						</label></span>
-						<span><input id="setting--toolbar-control--add-keyword" type="checkbox"></span>
+						<span><input id="setting--toolbar-control--add-keyword" type="checkbox" checked=""></span>
 						<span><label for="setting--toolbar-control--add-keyword">
 							<span class="toolbar-button"><img src="/icons/create.svg" alt="Add Keyword"></span>
 							Add a new keyword to the toolbar
 						</label></span>
-						<span><input id="setting--toolbar-control--apply-auto-keywords" type="checkbox"></span>
+						<span><input id="setting--toolbar-control--apply-auto-keywords" type="checkbox" checked=""></span>
 						<span><label for="setting--toolbar-control--apply-auto-keywords">
 							<span class="toolbar-button"><img src="/icons/refresh.svg" alt="Apply Automatic Keywords"></span>
 							Replace keywords with detected search keywords
@@ -123,54 +154,45 @@ Licensed under the EUPL-1.2-or-later.
 				<section class="group">
 					<hgroup>
 						<h3 id="group--toolbar-keyword-controls">
-							Keyword controls
+							Keyword buttons
 						</h3>
 						<p>
 							What controls should appear next to a keyword in the toolbar?
 						</p>
 					</hgroup>
 					<div class="setting-list">
-						<span><input id="setting--toolbar-keyword-control--edit" type="checkbox"></span>
+						<span><input id="setting--toolbar-keyword-control--edit" type="checkbox" checked=""></span>
 						<span><label for="setting--toolbar-keyword-control--edit">
 							<span class="toolbar-button"><img src="/icons/edit.svg" alt="Edit Keyword"></span>
 							Edit keyword
 						</label></span>
-						<span><input id="setting--toolbar-keyword-control--menu" type="checkbox"></span>
+						<span><input id="setting--toolbar-keyword-control--menu" type="checkbox" checked=""></span>
 						<span><label for="setting--toolbar-keyword-control--menu">
 							<span class="toolbar-button"><img src="/icons/reveal.svg" alt="Toggle Keyword Menu"></span>
-							Open matching options
+							Open keyword settings
 						</label></span>
 					</div>
 					<p class="image-placeholder">Keyword w/ current controls</p>
 				</section>
 				<section class="group">
 					<hgroup>
-						<h3 id="group--toolbar-style">
-							Style
+						<h3 id="group--toolbar-keyword-matching-defaults">
+							Add keyword: default settings
 						</h3>
-						<p>
-							How should the toolbar look?
-						</p>
 					</hgroup>
 					<div class="setting-list">
-						<span data-unit="px"><input id="setting--toolbar-font-size" type="number" min="0"></span>
-						<span><label for="setting--toolbar-font-size">
-							Font size
-						</label></span>
-						<span><input id="setting--toolbar-keyword-opacity" type="number" min="0" max="1" step="0.1"></span>
-						<span><label for="setting--toolbar-keyword-opacity">
-							Opacity of keyword buttons
-						</label></span>
-						<span><input id="setting--toolbar-control-opacity" type="number" min="0" max="1" step="0.1"></span>
-						<span><label for="setting--toolbar-control-opacity">
-							Opacity of other buttons
-						</label></span>
-						<span data-unit="px"><input id="setting--toolbar-corner-radius" type="number" min="0"></span>
-						<span><label for="setting--toolbar-corner-radius">
-							Radius of rounded corners
-						</label></span>
+						<span><input id="setting--toolbar-keyword-matching-default--case-sensitivity" type="checkbox"></span>
+						<span><label for="setting--toolbar-keyword-matching-default--case-sensitivity">Case-sensitive</label></span>
+						<span><input id="setting--toolbar-keyword-matching-default--stemming" type="checkbox" checked=""></span>
+						<span><label for="setting--toolbar-keyword-matching-default--stemming">Match word forms</label></span>
+						<span><input id="setting--toolbar-keyword-matching-default--whole-word" type="checkbox"></span>
+						<span><label for="setting--toolbar-keyword-matching-default--whole-word">Match whole words</label></span>
+						<span><input id="setting--toolbar-keyword-matching-default--diacritics-sensitivity" type="checkbox"></span>
+						<span><label for="setting--toolbar-keyword-matching-default--diacritics-sensitivity">Diacritics-sensitive</label></span>
+						<span><input id="setting--toolbar-keyword-matching-default--regex" type="checkbox"></span>
+						<span><label for="setting--toolbar-keyword-matching-default--regex"><i>Regular expression</i> (advanced)</label></span>
 					</div>
-					<p class="image-placeholder">Toolbar w/ current controls</p>
+					<p class="image-placeholder">Keyword w/ current controls</p>
 				</section>
 			</section>
 			<section class="section">
@@ -187,7 +209,7 @@ Licensed under the EUPL-1.2-or-later.
 						</p>
 					</hgroup>
 					<div class="setting-list">
-						<span><input id="setting--highlighting-hues" type="text"></span>
+						<span><input id="setting--highlighting-hues" type="text" value="300,60,110,220,30,190,0"></span>
 						<span><label for="setting--highlighting-hues">
 							Highlight colour hue values
 						</label></span>
@@ -204,9 +226,87 @@ Licensed under the EUPL-1.2-or-later.
 						</p>
 					</hgroup>
 					<div class="setting-list">
-						<span><select id="setting--highlighting-engine"></select></span>
+						<span><select id="setting--highlighting-engine">
+							<option value="ELEMENT" selected="">Element</option>
+							<option value="PAINT">Paint</option>
+						</select></span>
 						<span><label for="setting--highlighting-engine">
 							Highlighting engine
+						</label></span>
+					</div>
+				</section>
+			</section>
+			<section class="section">
+				<h2 id="section--search-highlighting">
+					Web search auto-highlight
+				</h2>
+				<section class="group">
+					<hgroup>
+						<h3 id="group--search-highlighting-activation">
+							Activation
+						</h3>
+						<p>
+							When should web searches be auto-highlighted?
+						</p>
+					</hgroup>
+					<div class="setting-list">
+						<span><input id="setting--search-highlighting" type="checkbox" checked=""></span>
+						<span><label for="setting--search-highlighting">
+							Activate when you use a search engine
+						</label></span>
+					</div>
+					<div class="setting-list">
+						<span><input id="setting--search-highlighting-url-parameters" type="text" value="search_terms,search_term,searchTerms,searchTerm,search_query,searchQuery,search,query,phrase,keywords,keyword,terms,term,text,s,q,p,k,_nkw,wd"></span>
+						<span>
+							<label for="setting--search-highlighting-url-parameters">
+								Search parameters to activate auto-highlight
+							</label>
+							<div class="note">
+								e.g. <u><i>https://google.com/search?<strong>q=keyword</strong></i></u>
+								<br>
+								<strong><i>q</i></strong> is the search parameter, <strong><i>keyword</i></strong> is the search
+							</div>
+						</span>
+					</div>
+				</section>
+				<section class="group">
+					<hgroup>
+						<h3 id="group--search-highlighting-display">
+							Configuration
+						</h3>
+					</hgroup>
+					<div class="setting-list rows">
+						<div>
+							<div class="setting-label-row"><label for="setting--search-highlighting-visibility">
+								Highlight visibility:
+							</label></div>
+							<div><select id="setting--search-highlighting-visibility">
+								<option value="" selected="">Show immediately</option>
+								<option value="">Hide until toggled</option>
+								<option value="">Show for search results, then hide</option>
+							</select></div>
+						</div>
+						<div>
+							<div class="setting-label-row"><label for="setting--search-highlighting-toolbar-collapsing">
+								Toolbar collapsing:
+							</label></div>
+							<div><select id="setting--search-highlighting-toolbar-collapsing">
+								<option value="">Collapse immediately</option>
+								<option value="" selected="">Do not collapse</option>
+							</select></div>
+						</div>
+					</div>
+				</section>
+				<section class="group">
+					<hgroup>
+						<h3 id="group--search-highlighting-exceptions">
+							Keyword exclusions
+						</h3>
+					</hgroup>
+					<div class="setting-list">
+						<span><input id="setting--search-highlighting-excluded-keywords" type="text" value="i,a,an,and,or,not,the,that,there,where,which,to,do,of,in,on,at,too,if,for,while,is,as,isn't,are,aren't,can,can't,how,vs,them,their,theirs,her,hers,him,his,it,its,me,my,one,one's,you,your,yours"></span>
+						<span><label for="setting--search-highlighting-excluded-keywords">
+							Keywords to exclude from auto-highlight
 						</label></span>
 					</div>
 				</section>

@@ -2,6 +2,7 @@
 	--bg-D: #1c1b22 /* Background color of Firefox's add-on manager. */;
 	--color-D: hsl(0 0% 78%);
 	--color-dim-D: hsl(0, 0%, 66%);
+	--color-dim-dim-D: hsl(0, 0%, 40%);
 	--color-logo-title-D: hsl(0, 0%, 82%);
 	--color-h1-D: hsl(0, 0%, 82%);
 	--color-h2-D: hsl(0, 0%, 82%);
@@ -27,10 +28,11 @@
 	--bg: hsl(0 0% 100%);
 	--color: hsl(0 0% 0%);
 	--color-dim: hsl(0 0% 30%);
+	--color-dim-dim: hsl(0 0% 60%);
 	--color-logo-title: hsl(0 0% 20%);
 	--color-h1: hsl(0 0% 20%);
 	--color-h2: hsl(0 0% 20%);
-	--color-h3: hsl(0, 0%, 32%);
+	--color-h3: hsl(0, 0%, 26%);
 	--bg-header: hsl(300 100% 98%);
 	--border-header: hsl(300 100% 88%);
 	--color-info: hsl(0 0% 50%);
@@ -45,6 +47,7 @@
 	--bg: var(--bg-D);
 	--color: var(--color-D);
 	--color-dim: var(--color-dim-D);
+	--color-dim-dim: var(--color-dim-dim-D);
 	--color-logo-title: var(--color-logo-title-D);
 	--color-h1: var(--color-h1-D);
 	--color-h2: var(--color-h2-D);
@@ -64,6 +67,7 @@
 		--bg: var(--bg-D);
 		--color: var(--color-D);
 		--color-dim: var(--color-dim-D);
+		--color-dim-dim: var(--color-dim-dim-D);
 		--color-logo-title: var(--color-logo-title-D);
 		--color-h1: var(--color-h1-D);
 		--color-h2: var(--color-h2-D);
@@ -86,6 +90,9 @@
 }
 
 body {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
 	margin: 0;
 }
 
@@ -236,6 +243,7 @@ body {
 }
 
 #main-container {
+	flex: 1;
 	display: flex;
 }
 
@@ -285,10 +293,11 @@ body {
 		box-sizing: border-box;
 		white-space: nowrap;
 		border: 1px solid var(--border-header);
+		border-right-color: transparent;
 	}
 
 	& li a.active {
-		border-right: var(--bg);
+		border-right-color: var(--bg);
 		background: var(--bg);
 	}
 }
@@ -312,6 +321,8 @@ h2 {
 }
 
 h3 {
+	margin-top: 1.6em;
+	margin-bottom: 0.9em;
 	color: var(--color-h3);
 }
 
@@ -391,7 +402,7 @@ p.hotkey kbd {
 .toolbar-button {
 	display: inline-block;
 	vertical-align: bottom;
-	height: 1em;
+	height: calc(1lh - 0.2em);
 	padding: 0.1em;
 	margin-inline: 0.1em;
 	border-radius: 0.2em;
@@ -401,7 +412,7 @@ p.hotkey kbd {
 }
 
 .toolbar-button img {
-	height: 1em;
+	height: calc(1lh - 0.2em);
 	aspect-ratio: 1;
 }
 
@@ -413,18 +424,40 @@ mark {
 
 .setting-list {
 	& {
+		margin-block: 1em;
+		padding-inline-start: 40px;
+	}
+	
+	&:not(.wrapped) {
 		display: grid;
 		grid-template-columns: min-content auto;
-		margin-block: 1em;
-		row-gap: 0.4em;
-		padding-inline-start: 40px;
+		row-gap: 0.5em;
 		column-gap: 14px;
 	}
 
+	&:not(.wrapped).rows {
+		grid-template-columns: auto;
+	}
+
+	&.wrapped {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 14px;
+	}
+
+	.setting-label-row {
+		margin-bottom: 0.3em;
+	}
+
 	& input[type="checkbox"] {
-		height: 0.8em;
+		height: 1em;
 		aspect-ratio: 1;
 		font-size: inherit;
+		vertical-align: top;
+		position: relative;
+		top: 0.1em;
+		margin-inline: 2px;
+		margin-block: 0;
 	}
 
 	& input[type="number"],
@@ -433,6 +466,14 @@ mark {
 		padding-block: 0;
 		font-size: 0.9em;
 		vertical-align: bottom;
+		margin-block: -1px /* Subtract space taken by user agent border */;
+		translate: 0 -1px /* Shift upwards to compensate for lost border space */;
+	}
+
+	select {
+		padding-block: 1px;
+		font-size: 0.9em;
+		margin-block: -1px /* Subtract space taken by padding */;
 	}
 
 	& input[type="number"] {
@@ -446,6 +487,7 @@ mark {
 	& [data-unit]::after {
 		content: attr(data-unit);
 		font-size: 0.9em;
+		margin-left: 1px;
 		color: var(--color-dim);
 	}
 }
