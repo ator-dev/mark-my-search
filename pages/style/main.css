@@ -311,7 +311,6 @@ body {
 #main {
 	width: 1200px;
 	padding-inline: 20px;
-	font-size: 1.2em;
 }
 
 .frame #main {
@@ -451,7 +450,7 @@ mark {
 		gap: 14px;
 	}
 
-	.setting-label-row {
+	& .setting-label-row {
 		margin-bottom: 0.3em;
 	}
 
@@ -460,27 +459,23 @@ mark {
 		height: 1em;
 		aspect-ratio: 1;
 		font-size: inherit;
-		vertical-align: top;
-		position: relative;
-		top: 0.1em;
-		margin-inline: 2px;
-		margin-block: 0;
+		margin: 0;
 	}
 
 	& input[type="number"],
-	& input[type="text"] {
+	& input[type="text"],
+	& select {
 		width: 8em;
 		padding-block: 0;
 		font-size: 0.9em;
-		vertical-align: bottom;
-		margin-block: -1px /* Subtract space taken by user agent border */;
-		translate: 0 -1px /* Shift upwards to compensate for lost border space */;
 	}
 
-	select {
+	& select {
 		padding-block: 1px;
-		font-size: 0.9em;
-		margin-block: -1px /* Subtract space taken by padding */;
+	}
+
+	& input[type="text"] {
+		width: 8em;
 	}
 
 	& input[type="number"] {
