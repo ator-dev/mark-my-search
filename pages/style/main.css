@@ -6,21 +6,37 @@
 
 :root {
 	--bg-D: #1c1b22 /* Background color of Firefox's add-on manager. */;
+	--bg-L: hsl(0 0% 100%);
 	--color-D: hsl(0 0% 78%);
+	--color-L: hsl(0 0% 0%);
 	--color-dim-D: hsl(0 0% 66%);
+	--color-dim-L: hsl(0 0% 30%);
 	--color-dim-dim-D: hsl(0 0% 40%);
+	--color-dim-dim-L: hsl(0 0% 60%);
 	--color-accent-D: hsl(300 30% 70%);
+	--color-accent-L: hsl(300 70% 30%);
 	--color-logo-title-D: hsl(0 0% 82%);
+	--color-logo-title-L: hsl(0 0% 20%);
 	--color-h1-D: hsl(0 0% 82%);
+	--color-h1-L: hsl(0 0% 20%);
 	--color-h2-D: hsl(0 0% 82%);
+	--color-h2-L: hsl(0 0% 20%);
 	--color-h3-D: hsl(0 0% 82%);
+	--color-h3-L: hsl(0 0% 26%);
 	--bg-header-D: hsl(300 100% 10%);
+	--bg-header-L: hsl(300 100% 98%);
 	--border-header-D: hsl(300 40% 40%);
+	--border-header-L: hsl(300 100% 88%);
 	--color-info-D: hsl(0 0% 50%);
+	--color-info-L: hsl(0 0% 50%);
 	--color-info-hover-D: hsl(300 100% 34%);
+	--color-info-hover-L: hsl(300 100% 34%);
 	--outline-info-details-D: hsl(0 0% 60%);
+	--outline-info-details-L: hsl(0 0% 60%);
 	--color-info-details-D: hsl(0 0% 0%);
+	--color-info-details-L: hsl(0 0% 0%);
 	--border-bubble-D: hsl(0 0% 64%);
+	--border-bubble-L: hsl(0 0% 64%);
 	--bg-keyboard: var(--bg);
 	--color-keyboard: var(--color-dim);
 	--border-keyboard: var(--color-dim);
@@ -32,22 +48,22 @@
 
 :root, :root:has(#theme-light:checked) {
 	color-scheme: light;
-	--bg: hsl(0 0% 100%);
-	--color: hsl(0 0% 0%);
-	--color-dim: hsl(0 0% 30%);
-	--color-dim-dim: hsl(0 0% 60%);
-	--color-accent: hsl(300 70% 30%);
-	--color-logo-title: hsl(0 0% 20%);
-	--color-h1: hsl(0 0% 20%);
-	--color-h2: hsl(0 0% 20%);
-	--color-h3: hsl(0, 0%, 26%);
-	--bg-header: hsl(300 100% 98%);
-	--border-header: hsl(300 100% 88%);
-	--color-info: hsl(0 0% 50%);
-	--color-info-hover: hsl(300 100% 34%);
-	--outline-info-details: hsl(0 0% 60%);
-	--color-info-details: hsl(0 0% 0%);
-	--border-bubble: hsl(0 0% 64%);
+	--bg: var(--bg-L);
+	--color: var(--color-L);
+	--color-dim: var(--color-dim-L);
+	--color-dim-dim: var(--color-dim-dim-L);
+	--color-accent: var(--color-accent-L);
+	--color-logo-title: var(--color-logo-title-L);
+	--color-h1: var(--color-h1-L);
+	--color-h2: var(--color-h2-L);
+	--color-h3: var(--color-h3-L);
+	--bg-header: var(--bg-header-L);
+	--border-header: var(--border-header-L);
+	--color-info: var(--color-info-L);
+	--color-info-hover: var(--color-info-hover-L);
+	--outline-info-details: var(--outline-info-details-L);
+	--color-info-details: var(--color-info-details-L);
+	--border-bubble: var(--border-bubble-L);
 }
 
 :root:has(#theme-dark:checked) {

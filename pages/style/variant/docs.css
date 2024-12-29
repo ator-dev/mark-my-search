@@ -4,6 +4,10 @@
  * Licensed under the EUPL-1.2-or-later.
  */
 
+:root {
+	--color-h3-L: hsl(0 0% 10%);
+}
+
 h1 {
 	margin-top: 1.4em;
 	margin-bottom: 1.4em;
@@ -19,5 +23,5 @@ h2 {
 h3 {
 	margin-top: 2.2em;
 	margin-bottom: 1.4em;
-	font-size: 1.2em;
+	font-size: 1.4em;
 }
