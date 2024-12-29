@@ -194,14 +194,19 @@ Licensed under the EUPL-1.2-or-later.
 					Highlighting
 				</h2>
 				<section class="group">
-					<h3 id="group--highlighting-style">
-						Style
+					<h3 id="group--highlighting-colors">
+						Highlight colours loop
 					</h3>
-					<div class="setting-list">
-						<div><input id="setting--highlighting-hues" type="text" value="300,60,110,220,30,190,0"></div>
-						<div><label for="setting--highlighting-hues">
-							Highlight colour hue values
-						</label></div>
+					<div class="setting-list rows">
+						<div class="setting-element-prototype setting-element setting-color-range-container">
+							<input type="number" min="0" max="360" step="10" value="0">
+							<div class="setting-color-range">
+								<input type="range" min="0" max="360" step="10" tabindex="-1" value="0">
+							</div>
+						</div>
+						<div class="setting-element-adder">
+							<button>Add Colour</button>
+						</div>
 					</div>
 					<p class="image-placeholder">Toolbar w/ keywords w/ highlight colours</p>
 				</section>

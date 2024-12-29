@@ -488,8 +488,8 @@ mark {
 
 	& [data-unit]::after {
 		content: attr(data-unit);
-		font-size: 0.9em;
 		margin-left: 1px;
+		font-size: 0.9em;
 		color: var(--color-dim);
 	}
 }
@@ -511,6 +511,55 @@ p.setting {
 	display: flex;
 	align-items: center;
 	font-size: 1.2em;
+}
+
+.setting-element-adder button {
+	border: 1px solid;
+	font-size: 0.9em;
+}
+
+.setting-color-range-container {
+	display: flex;
+	flex-direction: row;
+}
+
+.setting-color-range-container:not(:focus-within) {
+	& input[type="number"]:not(:hover) {
+		color: transparent;
+	}
+
+	& .setting-color-range {
+		visibility: hidden;
+	}
+}
+
+.setting-color-range-container input[type="number"] {
+	border: 1px solid var(--color);
+	background: hsl(var(--hue) 100% 50%);
+	color: black;
+}
+
+.setting-color-range {
+	margin-left: 10px;
+	background-image: linear-gradient(
+		to right in hsl longer hue,
+		transparent 0.54em,
+		red 0.54em,
+		red calc(100% - 0.54em),
+		transparent calc(100% - 0.54em)
+	);
+}
+
+.setting-color-range input[type="range"] {
+	display: block;
+	width: 200px;
+	margin: 0;
+	font-size: 0.9em;
+	accent-color: hsl(var(--hue) 100% 50%);
+}
+
+.setting-element-prototype {
+	display: none;
 }
 
 .image-placeholder {

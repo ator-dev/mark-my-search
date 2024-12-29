@@ -33,8 +33,46 @@ addEventListener("input", event => {
 				});
 			}
 		}
+	} else if (input instanceof HTMLElement && input.closest(".setting-color-range-container")) {
+		const container = input.closest<HTMLElement>(".setting-color-range-container")!;
+		const numberInput = container.querySelector("input[type='number']") as HTMLInputElement;
+		const rangeInput = container.querySelector("input[type='range']") as HTMLInputElement;
+		if (input === numberInput) {
+			rangeInput.value = numberInput.value;
+		} else if (input === rangeInput) {
+			numberInput.value = rangeInput.value;
+		}
+		const hue = parseInt(numberInput.value);
+		if (isNaN(hue)) {
+			container.style.removeProperty("--hue");
+		} else {
+			container.style.setProperty("--hue", String(hue));
+		}
 	}
-});
+}, { passive: true });
+
+addEventListener("click", event => {
+	const button = event.target;
+	if (!(button instanceof HTMLButtonElement)) {
+		return;
+	}
+	if (button.closest(".setting-element-adder")) {
+		const elementAdder = button.closest<HTMLElement>(".setting-element-adder")!;
+		let prototype: HTMLElement | null = elementAdder;
+		while (prototype && !prototype.classList.contains("setting-element-prototype")) {
+			prototype = prototype.previousElementSibling as HTMLElement | null;
+		}
+		if (prototype) {
+			const element = prototype.cloneNode(true) as HTMLElement;
+			element.classList.remove("setting-element-prototype");
+			elementAdder.insertAdjacentElement("beforebegin", element);
+		}
+	}
+}, { passive: true });
+
+for (const input of document.querySelectorAll(".setting-color-range-container input")) {
+	input.dispatchEvent(new InputEvent("input", { bubbles: true }));
+}
 
 const activateCurrentTab = (currentUrl: Location) => {
 	const id = currentUrl.hash.slice(1);
