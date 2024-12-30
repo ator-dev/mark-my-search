@@ -335,9 +335,8 @@ h2 {
 }
 
 h3 {
+	margin-block: 1.2em;
 	font-weight: normal;
-	margin-top: 1.6em;
-	margin-bottom: 0.9em;
 	color: var(--color-h3);
 }
 
