@@ -1,0 +1,110 @@
+<!--
+This file is part of Mark My Search.
+Copyright © 2021-present ‘ator-dev’, Mark My Search contributors.
+Licensed under the EUPL-1.2-or-later.
+-->
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+	<meta http-equiv="content-security-policy" content="default-src https:">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Mark My Search</title>
+	<link rel="icon" href="/icons/mms.svg" sizes="any">
+	<link rel="stylesheet" href="style/main.css">
+	<link rel="stylesheet" href="style/width-small.css">
+	<link rel="stylesheet" href="style/variant/popup.css">
+</head>
+<body>
+	<header id="header">
+		<div class="brand">
+			<img class="logo-icon" src="/icons/mms.svg">
+			<a class="logo-title" href="https://markmysearch.ator.systems" target="_blank">Mark My Search</a>
+		</div>
+		<nav class="controls">
+			<a href="#main" class="hidden">Skip navigation</a>
+			<a href="/pages/startpage.html" target="_blank">Start</a>
+			<a href="/pages/options.html" target="_blank">Settings</a>
+			<div class="menu">
+				<a href="#theme">Set theme</a>
+				<fieldset>
+					<legend>Select a site theme</legend>
+					<input type="radio" id="theme-light" name="theme">
+					<label for="theme-light">Light</label>
+					<input type="radio" id="theme" name="theme" checked="">
+					<label for="theme">Automatic</label>
+					<input type="radio" id="theme-dark" name="theme">
+					<label for="theme-dark">Dark</label>
+				</fieldset>
+			</div>
+		</nav>
+	</header>
+	<div id="main-container">
+		<main id="main">
+			<section class="section">
+				<h2 id="section--general">
+					Controls
+				</h2>
+				<ul class="inline-list">
+					<li>
+						<a href="/pages/startpage.html" target="_blank">Return to Start</a>
+					</li>
+					<li>
+						<a href="/pages/options.html" target="_blank">Settings</a>
+					</li>
+				</ul>
+				<section class="group">
+					<h3 id="group--settings">
+						Settings
+					</h3>
+					<div class="setting-list">
+						<div><input id="setting--search-highlighting" type="checkbox" checked=""></div>
+						<div>
+							<label for="setting--search-highlighting">
+								Search Highlighting
+							</label>
+						</div>
+						<div><input id="setting--summoning-restore-keywords" type="checkbox" checked=""></div>
+						<div><label for="setting--summoning-restore-keywords">
+							Restore keywords on re-summoning
+						</label></div>
+					</div>
+				</section>
+				<section class="group">
+					<h3 id="group--this-tab">
+						This Tab
+					</h3>
+					<div class="setting-list">
+						<div><input id="control--summoned" type="checkbox"></div>
+						<div><label for="control--summoned">
+							Summoned
+						</label></div>
+					</div>
+					<button>Delete Keywords</button>
+				</section>
+				<section class="group">
+					<h3 id="group--help">
+						Help
+					</h3>
+					<ul class="inline-list">
+						<li>
+							<a href="https://github.com/searchmarkers/mark-my-search/issues" target="_blank">File an issue</a>
+						</li>
+						<li>
+							<a href="ator-dev@protonmail.com">Email the developer</a>
+						</li>
+					</ul>
+				</section>
+			</section>
+		</main>
+	</div>
+	<nav id="footer">
+		<ul class="tab-list">
+			<a href="#section--general">Controls</a>
+			<a href="#section--website-exclusions">Website Exclusions</a>
+			<a href="#section--keyword-lists">Automation</a>
+		</ul>
+	</nav>
+	<script src="/dist/page.js"></script>
+</body>
+</html>

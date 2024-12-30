@@ -1,0 +1,76 @@
+/*
+ * This file is part of Mark My Search.
+ * Copyright © 2021-present ‘ator-dev’, Mark My Search contributors.
+ * Licensed under the EUPL-1.2-or-later.
+ */
+
+body {
+	width: 300px;
+	height: 500px;
+	box-sizing: border-box;
+	min-height: unset;
+	border: 2px solid hsl(300 100% 14%);
+	border-radius: 8px;
+}
+
+#header .controls {
+	display: none;
+}
+
+#footer {
+	& {
+		background: hsl(300 100% 6%);
+	}
+
+	&, & .tab-list {
+		border-bottom-left-radius: inherit;
+		border-bottom-right-radius: inherit;
+	}
+
+	& .tab-list {
+		& {
+			margin: 0;
+			padding: 0;
+			list-style: none;
+			display: flex;
+			justify-content: center;
+			border-top: 2px solid hsl(300 30% 32%);
+			border-bottom-left-radius: inherit;
+			border-bottom-right-radius: inherit;
+		}
+
+		& > a {
+			flex: 1 1 auto;
+			padding-block: 0.3em;
+			border: none;
+			border-bottom: 2px solid transparent;
+			border-radius: inherit;
+			font-size: 14px;
+			text-align: center;
+			background: transparent;
+			text-decoration: none;
+			color: hsl(300 20% 90%);
+		}
+
+		& > a:hover {
+			background: hsl(300 30% 22%);
+		}
+
+		& > a.active {
+			border-bottom: 2px solid hsl(300 100% 50%);
+			background: hsl(300 30% 32%);
+		}
+	}
+}
+
+#main-container {
+	overflow-y: auto;
+}
+
+.section:not(:has(:target)) {
+	display: none;
+}
+
+h2 {
+	display: none;
+}

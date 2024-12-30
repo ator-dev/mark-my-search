@@ -58,7 +58,7 @@
 	"action": {
 		"default_icon": "/icons/mms.svg",
 		"default_title": "Mark My Search",
-		"default_popup": "/pages/popup.html"
+		"default_popup": "/pages/popup-new.html#section--general"
 	},
 
 	"web_accessible_resources": [
