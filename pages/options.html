@@ -59,7 +59,7 @@ Licensed under the EUPL-1.2-or-later.
 						<a href="#section--search-highlighting">Search-highlighting</a>
 					</li>
 					<li>
-						<a href="#section--keyword-lists">Automation</a>
+						<a href="#section--automation">Automation</a>
 					</li>
 				</ul>
 			</nav>
@@ -193,13 +193,15 @@ Licensed under the EUPL-1.2-or-later.
 					<h3 id="group--highlighting-colors">
 						Colours
 					</h3>
-					<div class="setting-list rows">
-						<div class="setting-element-prototype setting-element setting-color-range-container">
-							<input type="number" min="0" max="360" step="10" value="0">
-							<div class="setting-color-range">
-								<input type="range" min="0" max="360" step="10" tabindex="-1" value="0">
-							</div>
-						</div>
+					<div class="setting-list-container">
+						<ul class="setting-list">
+							<li class="setting-element-prototype setting-element setting-color-range-container">
+								<input type="number" min="0" max="360" step="10" value="0">
+								<div class="setting-color-range">
+									<input type="range" min="0" max="360" step="10" tabindex="-1" value="0">
+								</div>
+							</li>
+						</ul>
 						<div class="setting-element-adder">
 							<button>Add Colour</button>
 						</div>
@@ -210,10 +212,12 @@ Licensed under the EUPL-1.2-or-later.
 					<h3 id="group--highlighting-website-blocklist">
 						Websites Not To Highlight
 					</h3>
-					<div class="setting-list rows">
-						<div class="setting-element-prototype setting-element">
-							<input type="text">
-						</div>
+					<div class="setting-list-container">
+						<ul class="setting-list">
+							<li class="setting-element-prototype setting-element">
+								<input type="text">
+							</li>
+						</ul>
 						<div class="setting-element-adder">
 							<button>Add Website</button>
 						</div>
@@ -269,10 +273,12 @@ Licensed under the EUPL-1.2-or-later.
 					<h4>
 						URL Parameters:
 					</h4>
-					<div class="setting-list rows">
-						<div class="setting-element-prototype setting-element">
-							<input type="text">
-						</div>
+					<div class="setting-list-container">
+						<ul class="setting-list">
+							<li class="setting-element-prototype setting-element">
+								<input type="text">
+							</li>
+						</ul>
 						<div class="setting-element-adder">
 							<button>Add Parameter</button>
 						</div>
@@ -280,10 +286,12 @@ Licensed under the EUPL-1.2-or-later.
 					<h4>
 						Ignored Websites:
 					</h4>
-					<div class="setting-list rows">
-						<div class="setting-element-prototype setting-element">
-							<input type="text">
-						</div>
+					<div class="setting-list-container">
+						<ul class="setting-list">
+							<li class="setting-element-prototype setting-element">
+								<input type="text">
+							</li>
+						</ul>
 						<div class="setting-element-adder">
 							<button>Add Website</button>
 						</div>
@@ -336,6 +344,67 @@ Licensed under the EUPL-1.2-or-later.
 						<div><label for="setting--search-highlighting-toolbar-collapsing--collapse">
 							Collapsed
 						</label></div>
+					</div>
+				</section>
+			</section>
+			<section class="section">
+				<h2 id="section--automation">
+					Automation
+				</h2>
+				<section class="group">
+					<h3 id="group--keyword-lists">
+						Keyword Lists
+					</h3>
+					<div class="setting-list-container setting-keyword-list-list">
+						<ul class="setting-list">
+							<li class="setting-element-prototype setting-element">
+								<div class="setting-list">
+									<input type="text">
+									<label>
+										Name
+									</label>
+								</div>
+								<div class="setting-list-container">
+									<ul class="setting-list">
+										<li class="setting-element-prototype setting-element">
+											<div class="setting-list">
+												<input type="text">
+												<label>
+													Keyword
+												</label>
+											</div>
+										</li>
+									</ul>
+									<div class="setting-element-adder">
+										<button>
+											Add Keyword
+										</button>
+									</div>
+								</div>
+								<div class="setting-list-container">
+									<ul class="setting-list">
+										<li class="setting-element-prototype setting-element">
+											<div class="setting-list">
+												<input type="text">
+												<label>
+													Website
+												</label>
+											</div>
+										</li>
+									</ul>
+									<div class="setting-element-adder">
+										<button>
+											Add Website
+										</button>
+									</div>
+								</div>
+							</li>
+						</ul>
+						<div class="setting-element-adder">
+							<button>
+								Add Keyword List
+							</button>
+						</div>
 					</div>
 				</section>
 			</section>

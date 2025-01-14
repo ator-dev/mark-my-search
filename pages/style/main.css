@@ -442,30 +442,33 @@ mark {
 	color: inherit;
 }
 
+.setting-list-container, :not(.setting-list-container) > .setting-list {
+	margin-block: var(--list-margin-block);
+	padding-inline-start: var(--list-indent);
+}
+
+.setting-list-container > .setting-list {
+	margin: 0;
+	padding: 0;
+}
+
+.setting-list-container > .setting-element-adder {
+	margin-top: var(--list-gap);
+}
+
 .setting-list {
-	& {
-		margin-block: var(--list-margin-block);
-		padding-inline-start: var(--list-indent);
+	&:is(ul, ol) {
+		list-style: none;
 	}
-	
-	&:not(.wrapped) {
+
+	&:not(ul, ol) {
 		display: grid;
 		grid-template-columns: min-content auto;
 		row-gap: var(--list-gap);
 		column-gap: var(--horizontal-gap);
 	}
 
-	&:not(.wrapped).rows {
-		grid-template-columns: auto;
-	}
-
-	&.wrapped {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 14px;
-	}
-
-	& .setting-label-row {
+	& > .setting-label-row {
 		margin-bottom: 0.3em;
 	}
 
@@ -516,21 +519,23 @@ ol, ul {
 		list-style-type: circle;
 	}
 
-	& li {
+	& > li {
 		margin-block: var(--list-gap);
 	}
 }
 
 .inline-list {
-	padding: 0;
-}
+	& {
+		padding: 0;
+	}
 
-.inline-list li {
-	display: inline;
-}
+	& > li {
+		display: inline;
+	}
 
-.inline-list li + li::before {
-	content: "·";
+	& > li + li::before {
+		content: "·";
+	}
 }
 
 button {
@@ -585,6 +590,21 @@ p.setting {
 	margin: 0;
 	font-size: 0.9em;
 	accent-color: hsl(var(--hue) 100% 50%);
+}
+
+.setting-keyword-list-list.setting-list, .setting-keyword-list-list > .setting-list {
+	&, & > .setting-element {
+		border-block: 1px solid var(--color-dim-dim);
+	}
+
+	& {
+		border-bottom: none;
+	}
+
+	& > .setting-element {
+		border-top: none;
+		contain: layout /* Prevent margin collapsing */;
+	}
 }
 
 .setting-element-prototype {

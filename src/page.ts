@@ -58,15 +58,11 @@ addEventListener("click", event => {
 	}
 	if (button.closest(".setting-element-adder")) {
 		const elementAdder = button.closest<HTMLElement>(".setting-element-adder")!;
-		let prototype: HTMLElement | null = elementAdder;
-		while (prototype && !prototype.classList.contains("setting-element-prototype")) {
-			prototype = prototype.previousElementSibling as HTMLElement | null;
-		}
-		if (prototype) {
-			const element = prototype.cloneNode(true) as HTMLElement;
-			element.classList.remove("setting-element-prototype");
-			elementAdder.insertAdjacentElement("beforebegin", element);
-		}
+		const list = elementAdder.previousElementSibling as HTMLElement;
+		const prototype = list.querySelector(".setting-element-prototype") as HTMLElement;
+		const element = prototype.cloneNode(true) as HTMLElement;
+		element.classList.remove("setting-element-prototype");
+		list.append(element);
 	}
 }, { passive: true });
 
