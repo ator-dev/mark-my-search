@@ -5,12 +5,13 @@
  */
 
 import type { MatchMode } from "/dist/modules/utility.mjs";
-import { MatchTerm, messageSendBackground } from "/dist/modules/utility.mjs";
+import { messageSendBackground } from "/dist/modules/utility.mjs";
 import { isTabResearchPage } from "/dist/modules/util-privileged.mjs";
 import type { PagePanelInfo, PageInteractionObjectRowInfo, PageInteractionCheckboxInfo } from "/dist/modules/page-build.mjs";
 import { loadPage, pageInsertWarning, sendProblemReport, PageAlertType } from "/dist/modules/page-build.mjs";
 import type { StorageLocalValues, StorageAreaName, StorageArea } from "/dist/modules/storage.mjs";
 import { StorageSession, StorageLocal, StorageSync, storageGet, storageSet } from "/dist/modules/storage.mjs";
+import { MatchTerm } from "/dist/modules/match-term.mjs";
 
 /**
  * Loads the popup content into the page.
@@ -36,7 +37,10 @@ const loadPopup = (() => {
 			},
 			onToggle: (checked, objectIndex, containerIndex) => {
 				storageGet("sync", [ StorageSync.TERM_LISTS ]).then(sync => {
-					sync.termLists[containerIndex].terms[objectIndex].matchMode[mode] = checked;
+					const oldTerm = sync.termLists[containerIndex].terms[objectIndex];
+					const matchMode = Object.assign({}, oldTerm.matchMode) as MatchMode;
+					matchMode[mode] = checked;
+					sync.termLists[containerIndex].terms[objectIndex] = new MatchTerm(oldTerm.phrase, matchMode);
 					storageSet("sync", sync);
 				});
 			},
@@ -418,7 +422,8 @@ const loadPopup = (() => {
 													},
 													onChange: (text, objectIndex, containerIndex) => {
 														storageGet("sync", [ StorageSync.TERM_LISTS ]).then(sync => {
-															sync.termLists[containerIndex].terms[objectIndex].phrase = text;
+															const oldTerm = sync.termLists[containerIndex].terms[objectIndex];
+															sync.termLists[containerIndex].terms[objectIndex] = new MatchTerm(oldTerm.phrase, oldTerm.matchMode);
 															storageSet("sync", sync);
 														});
 													},

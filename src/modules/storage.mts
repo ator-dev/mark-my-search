@@ -5,8 +5,8 @@
  */
 
 import type { MatchTerms, MatchMode } from "/dist/modules/utility.mjs";
-import { MatchTerm } from "/dist/modules/utility.mjs";
 import { Engine } from "/dist/modules/util-privileged.mjs";
+import type { MatchTerm } from "/dist/modules/match-term.mjs";
 
 chrome.storage = !globalThis.browser ? chrome.storage : browser.storage as typeof chrome.storage;
 chrome.storage.session ??= chrome.storage.local;

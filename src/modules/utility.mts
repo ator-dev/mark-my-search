@@ -4,9 +4,8 @@
  * Licensed under the EUPL-1.2-or-later.
  */
 
-import { getDiacriticsMatchingPatternString } from "/dist/modules/pattern-diacritic.mjs";
-import { getWordPatternStrings } from "/dist/modules/pattern-stem.mjs";
 import type { StorageSyncValues, StorageSync } from "/dist/modules/storage.mjs";
+import type { MatchTerm } from "/dist/modules/match-term.mjs";
 
 export type MatchTerms = Array<MatchTerm>
 
@@ -70,82 +69,6 @@ export interface MatchMode {
 	stem: boolean
 	whole: boolean
 	diacritics: boolean
-}
-
-/**
- * Represents a search term with regex matching options. Used by the DOM text finding algorithm and supporting components.
- */
-export class MatchTerm {
-	phrase: string;
-	selector: string;
-	pattern: RegExp;
-	matchMode: MatchMode;
-	hue: number;
-	command: string;
-	commandReverse: string;
-
-	constructor (phrase: string, matchMode?: Partial<MatchMode>, options: Partial<{
-		allowStemOverride: boolean
-	}> = {}) {
-		this.phrase = phrase;
-		this.matchMode = {
-			regex: false,
-			case: false,
-			stem: true,
-			whole: false,
-			diacritics: false,
-		};
-		if (matchMode) {
-			Object.assign(this.matchMode, matchMode);
-		}
-		if (options.allowStemOverride && phrase.length < 3) {
-			this.matchMode.stem = false;
-		}
-		this.compile();
-	}
-
-	/**
-	 * Construct a regex based on the stored search term information, assigning it to `this.pattern`.
-	 */
-	compile () {
-		if (/\W/g.test(this.phrase)) {
-			this.matchMode.stem = false;
-		}
-		const sanitize: (phrase: string, replacement?: string) => string = this.matchMode.regex
-			? phrase => phrase
-			: (phrase, replacement) => sanitizeForRegex(phrase, replacement);
-		this.selector = `${
-			sanitize(this.phrase, "_").replace(/\W/g, "_")
-		}-${
-			Object.values(this.matchMode).map((matchFlag: boolean) => Number(matchFlag)).join("")
-		}-${
-			(Date.now() + Math.random()).toString(36).replace(/\W/g, "_")
-		}`; // Selector is most likely unique; a repeated selector results in undefined behaviour.
-		const flags = this.matchMode.case ? "gu" : "giu";
-		const [ patternStringPrefix, patternStringSuffix ] = (this.matchMode.stem && !this.matchMode.regex)
-			? getWordPatternStrings(this.phrase)
-			: [ this.phrase, "" ];
-		const optionalHyphenStandin = "_ _ _"; // TODO improve method of inserting optional hyphens
-		const optionalHyphen = this.matchMode.regex ? "" : "(\\p{Pd})?";
-		const getDiacriticsMatchingPatternStringSafe = (chars: string) =>
-			this.matchMode.diacritics ? getDiacriticsMatchingPatternString(chars) : chars;
-		const getHyphenatedPatternString = (word: string) =>
-			word.replace(/(\w\?|\w)/g,`$1${optionalHyphenStandin}`);
-		const getBoundaryTest = (charBoundary: string) =>
-			this.matchMode.whole && /\w/g.test(charBoundary) ? "\\b" : "";
-		const patternString = `${
-			getBoundaryTest(patternStringPrefix[0])
-		}${
-			getDiacriticsMatchingPatternStringSafe(getHyphenatedPatternString(sanitize(patternStringPrefix.slice(0, -1))))
-		}${
-			getDiacriticsMatchingPatternStringSafe(sanitize(patternStringPrefix[patternStringPrefix.length - 1]))
-		}(?:${
-			patternStringSuffix ? optionalHyphenStandin + getDiacriticsMatchingPatternStringSafe(patternStringSuffix) : ""
-		})?${
-			getBoundaryTest(patternStringPrefix[patternStringPrefix.length - 1])
-		}`.replace(new RegExp(optionalHyphenStandin, "g"), optionalHyphen);
-		this.pattern = new RegExp(patternString, flags);
-	}
 }
 
 export const termEquals = (termA: MatchTerm | undefined, termB: MatchTerm | undefined): boolean =>

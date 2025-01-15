@@ -4,9 +4,9 @@
  * Licensed under the EUPL-1.2-or-later.
  */
 
-import type { MatchTerm } from "/dist/modules/utility.mjs";
 import { getIdSequential, getName } from "/dist/modules/utility.mjs";
 import { StorageSession, storageGet } from "/dist/modules/storage.mjs";
+import type { MatchTerm } from "/dist/modules/match-term.mjs";
 
 export type PageInteractionObjectRowInfo = {
 	className: string

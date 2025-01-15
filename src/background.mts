@@ -7,7 +7,6 @@
 import type { MatchTerms, HighlightMessage, BackgroundMessage, BackgroundMessageResponse } from "/dist/modules/utility.mjs";
 import {
 	log, assert,
-	MatchTerm,
 	CommandType,
 	messageSendHighlight, parseCommand, sanitizeForRegex,
 } from "/dist/modules/utility.mjs";
@@ -21,6 +20,7 @@ import {
 	storageGet, storageSet, storageInitialize,
 	optionsRepair,
 } from "/dist/modules/storage.mjs";
+import { MatchTerm } from "/dist/modules/match-term.mjs";
 
 // DEPRECATE
 /**
