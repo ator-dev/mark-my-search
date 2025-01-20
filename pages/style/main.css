@@ -323,6 +323,7 @@ body {
 
 #main {
 	width: 1200px;
+	overflow-x: auto /* Required to prevent scrollable flex (row) containers from taking up the full width */;
 	padding-inline: 20px;
 }
 
