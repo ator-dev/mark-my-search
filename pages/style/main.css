@@ -40,8 +40,8 @@
 	--color-info-hover-L: hsl(300 100% 34%);
 	--outline-info-details-D: hsl(0 0% 60%);
 	--outline-info-details-L: hsl(0 0% 60%);
-	--color-info-details-D: hsl(0 0% 0%);
-	--color-info-details-L: hsl(0 0% 0%);
+	--color-info-details-D: var(--color);
+	--color-info-details-L: var(--color);
 	--border-bubble-D: hsl(0 0% 64%);
 	--border-bubble-L: hsl(0 0% 64%);
 	--bg-keyboard: var(--bg);
@@ -397,7 +397,6 @@ input.info:checked + .info.details {
 	width: 100%;
 	padding: 0.8em;
 	margin-block: 0.5em;
-	background: Canvas;
 	outline: 1px solid var(--outline-info-details);
 	color: var(--color-info-details);
 }
@@ -437,7 +436,7 @@ p.hotkey kbd {
 	aspect-ratio: 1;
 }
 
-mark {
+.highlight {
 	background: hsl(300 100% 60% / 0.4);
 	box-shadow: 0 0 0 1px hsl(300 100% 20% / 0.35);
 	color: inherit;
