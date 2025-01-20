@@ -1,3 +1,7 @@
+:root {
+	--list-indent: 10px;
+}
+
 #header {
 	& {
 		flex-direction: column;
