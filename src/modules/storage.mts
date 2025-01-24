@@ -208,7 +208,8 @@ export const storageGet = async <Area extends StorageAreaName>(area: Area, keys?
 	if (keys && keys.every(key => storageCache[area][key as string] !== undefined)) {
 		return { ...storageCache[area] } as StorageAreaValues<Area>;
 	}
-	const store = await chrome.storage[area].get(keys) as StorageAreaValues<Area>;
+	// I don't understand why it wants Array<never>.
+	const store = await chrome.storage[area].get(keys as Array<never>) as StorageAreaValues<Area>;
 	Object.entries(store).forEach(([ key, value ]) => {
 		storageCache[area][key] = value;
 	});
