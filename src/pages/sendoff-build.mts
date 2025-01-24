@@ -4,7 +4,7 @@
  * Licensed under the EUPL-1.2-or-later.
  */
 
-import { getName } from "/dist/modules/utility.mjs";
+import { getName } from "/dist/modules/manifest.mjs";
 import type { PagePanelInfo } from "/dist/modules/page-build.mjs";
 import { loadPage, sendProblemReport, PageAlertType } from "/dist/modules/page-build.mjs";
 

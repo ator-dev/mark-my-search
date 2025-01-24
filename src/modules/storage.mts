@@ -4,22 +4,21 @@
  * Licensed under the EUPL-1.2-or-later.
  */
 
-import type { MatchTerms, MatchMode } from "/dist/modules/utility.mjs";
-import { Engine } from "/dist/modules/util-privileged.mjs";
-import type { MatchTerm } from "/dist/modules/match-term.mjs";
+import type { MatchMode, MatchTerm } from "/dist/modules/match-term.mjs";
+import type { SearchSite } from "/dist/modules/search-sites.mjs";
 
 chrome.storage = !globalThis.browser ? chrome.storage : browser.storage as typeof chrome.storage;
 chrome.storage.session ??= chrome.storage.local;
 
-export type ResearchInstances = Record<number, ResearchInstance>
-export type Engines = Record<string, Engine>
+export type ResearchRecords = Record<number, ResearchRecord>
+export type SearchSites = Record<string, SearchSite>
 export type StorageSessionValues = {
-	[StorageSession.RESEARCH_INSTANCES]: ResearchInstances
-	[StorageSession.ENGINES]: Engines
+	[StorageSession.RESEARCH_RECORDS]: ResearchRecords
+	[StorageSession.SEARCH_SITES]: SearchSites
 }
 export type StorageLocalValues = {
 	[StorageLocal.ENABLED]: boolean
-	[StorageLocal.PERSIST_RESEARCH_INSTANCES]: boolean
+	[StorageLocal.PERSIST_RESEARCH_RECORDS]: boolean
 }
 export type StorageSyncValues = {
 	[StorageSync.AUTO_FIND_OPTIONS]: {
@@ -88,13 +87,13 @@ export type StorageAreaValues<Area extends StorageAreaName> =
 never;
 
 export enum StorageSession { // Keys assumed to be unique across all storage areas (excluding 'managed')
-	RESEARCH_INSTANCES = "researchInstances",
-	ENGINES = "engines",
+	RESEARCH_RECORDS = "researchRecords",
+	SEARCH_SITES = "searchSites",
 }
 
 export enum StorageLocal {
 	ENABLED = "enabled",
-	PERSIST_RESEARCH_INSTANCES = "persistResearchInstances",
+	PERSIST_RESEARCH_RECORDS = "persistResearchInstances",
 }
 
 export enum StorageSync {
@@ -109,11 +108,11 @@ export enum StorageSync {
 	TERM_LISTS = "termLists",
 }
 
-export interface ResearchInstance {
-	terms: MatchTerms
+export interface ResearchRecord {
+	terms: ReadonlyArray<MatchTerm>
 	highlightsShown: boolean
 	barCollapsed: boolean
-	enabled: boolean
+	active: boolean
 }
 
 /**
@@ -210,11 +209,6 @@ export const storageGet = async <Area extends StorageAreaName>(area: Area, keys?
 		return { ...storageCache[area] } as StorageAreaValues<Area>;
 	}
 	const store = await chrome.storage[area].get(keys) as StorageAreaValues<Area>;
-	const storeAsSession = store as StorageAreaValues<"session">;
-	if (storeAsSession.engines) {
-		const engines = storeAsSession.engines as Engines;
-		Object.keys(engines).forEach(id => engines[id] = Object.assign(new Engine, engines[id]));
-	}
 	Object.entries(store).forEach(([ key, value ]) => {
 		storageCache[area][key] = value;
 	});
@@ -226,7 +220,7 @@ export const storageGet = async <Area extends StorageAreaName>(area: Area, keys?
  * @param area 
  * @param store 
  */
-export const storageSet = async <Area extends StorageAreaName>(area: Area, store: StorageAreaValues<Area>) => {
+export const storageSet = async <Area extends StorageAreaName>(area: Area, store: Partial<StorageAreaValues<Area>>) => {
 	Object.entries(store).forEach(([ key, value ]) => {
 		storageCache[area][key] = value;
 	});
@@ -252,8 +246,8 @@ export const storageInitialize = async () => {
 		await chrome.storage.local.remove(toRemove);
 	}
 	await storageSet("session", {
-		researchInstances: {},
-		engines: {},
+		researchRecords: {},
+		searchSites: {},
 	});
 };
 
@@ -319,7 +313,7 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
 	if (areaName === "managed") {
 		return;
 	}
-	if ([ "researchInstances", "engines" ].some(key => changes[key])) {
+	if ([ "researchRecords", "searchSites" ].some(key => changes[key])) {
 		areaName = "session";
 	}
 	Object.entries(changes).forEach(([ key, value ]) => {
@@ -331,7 +325,7 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
 	if (areaName === "managed") {
 		return;
 	}
-	if ([ "researchInstances", "engines" ].some(key => changes[key])) {
+	if ([ "researchRecords", "searchSites" ].some(key => changes[key])) {
 		areaName = "session";
 	}
 	Object.entries(changes).forEach(([ key, value ]) => {

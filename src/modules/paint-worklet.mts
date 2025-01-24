@@ -4,7 +4,12 @@
  * Licensed under the EUPL-1.2-or-later.
  */
 
-import type { TermSelectorStyles, HighlightBox } from "/dist/content.mjs";
+import type { HighlightBox } from "/dist/modules/highlight/models/tree-cache/paint.mjs";
+
+type TermTokenStyles = Record<string, {
+	hue: number
+	cycle: number
+}>
 
 type PaintWorkletGlobalScope = {
 	devicePixelRatio: number
@@ -24,7 +29,7 @@ type PaintWorkletGlobalScope = {
 		size: { width: number, height: number },
 		properties: { get: (property: string) => { toString: () => string } },
 	) {
-		const selectorStyles = JSON.parse(properties.get("--markmysearch-styles").toString() || "{}") as TermSelectorStyles;
+		const selectorStyles = JSON.parse(properties.get("--markmysearch-styles").toString() || "{}") as TermTokenStyles;
 		const boxes = JSON.parse(properties.get("--markmysearch-boxes").toString() || "[]") as Array<HighlightBox>;
 		boxes.forEach(box => {
 			const style = selectorStyles[box.selector];

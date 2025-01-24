@@ -4,7 +4,7 @@
  * Licensed under the EUPL-1.2-or-later.
  */
 
-import { getIdSequential } from "/dist/modules/utility.mjs";
+import { getIdSequential } from "/dist/modules/common.mjs";
 import type { StorageSyncValues } from "/dist/modules/storage.mjs";
 import { optionsDefault, storageGet, storageSet } from "/dist/modules/storage.mjs";
 

@@ -43,6 +43,7 @@ interface TermControlInputInterface extends TermControlComponentInterface {
 	readonly openOptionList: () => void
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface TermControlOptionListInterface extends TermControlComponentInterface {}
 
 export type {

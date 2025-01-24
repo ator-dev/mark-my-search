@@ -4,9 +4,10 @@
  * Licensed under the EUPL-1.2-or-later.
  */
 
-import { getIdSequential, getName } from "/dist/modules/utility.mjs";
 import { StorageSession, storageGet } from "/dist/modules/storage.mjs";
 import type { MatchTerm } from "/dist/modules/match-term.mjs";
+import { getIdSequential } from "/dist/modules/common.mjs";
+import { getName } from "/dist/modules/manifest.mjs";
 
 export type PageInteractionObjectRowInfo = {
 	className: string
@@ -178,9 +179,9 @@ export const sendEmail: (
 	*/
 export const sendProblemReport = async (userMessage = "", formFields: Array<FormField>) => {
 	const [ tab ] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
-	const session = await storageGet("session", [ StorageSession.RESEARCH_INSTANCES ]);
-	const phrases = session.researchInstances[tab.id as number]
-		? session.researchInstances[tab.id as number].terms.map((term: MatchTerm) => term.phrase).join(" ∣ ")
+	const session = await storageGet("session", [ StorageSession.RESEARCH_RECORDS ]);
+	const phrases = session.researchRecords[tab.id as number]
+		? session.researchRecords[tab.id as number].terms.map((term: MatchTerm) => term.phrase).join(" ∣ ")
 		: "";
 	const message = {
 		addon_version: chrome.runtime.getManifest().version,
@@ -829,7 +830,7 @@ textarea
 			}
 			container.appendChild(button);
 			let getMessageText = () => "";
-			// @typescript-eslint/no-empty-function
+			// eslint-disable-next-line @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars
 			let allowInputs = (allowed = true) => {};
 			button.addEventListener("click", () => {
 				button.disabled = true;

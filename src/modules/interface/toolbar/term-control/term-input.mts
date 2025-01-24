@@ -40,7 +40,6 @@ class TermInput {
 		input.type = "text";
 		input.classList.add(EleClass.CONTROL_INPUT);
 		// Inputs should not be focusable unless user has already focused bar. (0)
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
 		if (!document.activeElement || document.activeElement.id !== CommonEleID.BAR) {
 			input.tabIndex = -1;
 		}

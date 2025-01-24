@@ -4,14 +4,13 @@
  * Licensed under the EUPL-1.2-or-later.
  */
 
-import type { MatchMode } from "/dist/modules/utility.mjs";
-import { messageSendBackground } from "/dist/modules/utility.mjs";
-import { isTabResearchPage } from "/dist/modules/util-privileged.mjs";
 import type { PagePanelInfo, PageInteractionObjectRowInfo, PageInteractionCheckboxInfo } from "/dist/modules/page-build.mjs";
 import { loadPage, pageInsertWarning, sendProblemReport, PageAlertType } from "/dist/modules/page-build.mjs";
 import type { StorageLocalValues, StorageAreaName, StorageArea } from "/dist/modules/storage.mjs";
 import { StorageSession, StorageLocal, StorageSync, storageGet, storageSet } from "/dist/modules/storage.mjs";
-import { MatchTerm } from "/dist/modules/match-term.mjs";
+import { MatchTerm, type MatchMode } from "/dist/modules/match-term.mjs";
+import { isTabResearchPage } from "/dist/modules/tabs.mjs";
+import { sendBackgroundMessage } from "/dist/modules/messaging/background.mjs";
 
 /**
  * Loads the popup content into the page.
@@ -125,7 +124,7 @@ const loadPopup = (() => {
 							label: {
 								text: "Restore keywords on reactivation",
 							},
-							checkbox: getStorageFieldCheckboxInfo("local", StorageLocal.PERSIST_RESEARCH_INSTANCES),
+							checkbox: getStorageFieldCheckboxInfo("local", StorageLocal.PERSIST_RESEARCH_RECORDS),
 						},
 					],
 				},
@@ -146,27 +145,39 @@ const loadPopup = (() => {
 								},
 								onToggle: checked => {
 									if (checked) {
-										storageGet("session", [ StorageSession.RESEARCH_INSTANCES ]).then(async session => {
+										storageGet("session", [ StorageSession.RESEARCH_RECORDS ]).then(async session => {
 											const [ tab ] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
 											if (tab.id === undefined) {
 												return;
 											}
-											const local = await storageGet("local", [ StorageLocal.PERSIST_RESEARCH_INSTANCES ]);
-											const researchInstance = session.researchInstances[tab.id];
-											if (researchInstance && local.persistResearchInstances) {
-												researchInstance.enabled = true;
+											const local = await storageGet("local", [ StorageLocal.PERSIST_RESEARCH_RECORDS ]);
+											const researchRecord = session.researchRecords[tab.id];
+											if (researchRecord && local.persistResearchInstances) {
+												researchRecord.active = true;
 											}
-											messageSendBackground({
-												terms: (researchInstance && researchInstance.enabled) ? researchInstance.terms : [],
-												termsSend: true,
-												toggle: {
+											sendBackgroundMessage({
+												type: "commands",
+												commands: [ {
+													type: "sendTabCommands",
+													commands: [ {
+														type: "useTerms",
+														terms: (researchRecord && researchRecord.active) ? researchRecord.terms : [],
+														replaceExisting: true,
+													}, {
+														type: "activate",
+													} ]
+												}, {
+													type: "toggleInTab",
 													highlightsShownOn: true,
-												},
+												} ],
 											});
 										});
 									} else {
-										messageSendBackground({
-											deactivateTabResearch: true,
+										sendBackgroundMessage({
+											type: "commands",
+											commands: [ {
+												type: "deactivateTabResearch",
+											} ],
 										});
 									}
 								}
@@ -180,18 +191,21 @@ const loadPopup = (() => {
 								onLoad: async setEnabled => {
 									const [ tab ] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
 									setEnabled(tab.id === undefined ? false :
-										!!(await storageGet("session", [ StorageSession.RESEARCH_INSTANCES ])).researchInstances[tab.id]);
+										!!(await storageGet("session", [ StorageSession.RESEARCH_RECORDS ])).researchRecords[tab.id]);
 								},
 								onClick: async () => {
 									const [ tab ] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
 									if (tab.id === undefined) {
 										return;
 									}
-									const session = await storageGet("session", [ StorageSession.RESEARCH_INSTANCES ]);
-									delete session.researchInstances[tab.id];
+									const session = await storageGet("session", [ StorageSession.RESEARCH_RECORDS ]);
+									delete session.researchRecords[tab.id];
 									await storageSet("session", session);
-									messageSendBackground({
-										deactivateTabResearch: true,
+									sendBackgroundMessage({
+										type: "commands",
+										commands: [ {
+											type: "deactivateTabResearch",
+										} ],
 									});
 								},
 							} ],
@@ -476,24 +490,33 @@ const loadPopup = (() => {
 											return;
 										}
 										const sync = await storageGet("sync", [ StorageSync.TERM_LISTS ]);
-										const session = await storageGet("session", [ StorageSession.RESEARCH_INSTANCES ]);
-										const researchInstance = session.researchInstances[tab.id];
-										if (researchInstance) {
-											researchInstance.enabled = true;
+										const session = await storageGet("session", [ StorageSession.RESEARCH_RECORDS ]);
+										const researchRecord = session.researchRecords[tab.id];
+										if (researchRecord) {
+											researchRecord.active = true;
 											await storageSet("session", session);
 										}
-										messageSendBackground({
-											terms: researchInstance
-												? researchInstance.terms.concat(
-													sync.termLists[index].terms.filter(termFromList =>
-														!researchInstance.terms.find(term => term.phrase === termFromList.phrase)
-													)
-												)
-												: sync.termLists[index].terms,
-											termsSend: true,
-											toggle: {
+										sendBackgroundMessage({
+											type: "commands",
+											commands: [ {
+												type: "sendTabCommands",
+												commands: [ {
+													type: "useTerms",
+													terms: researchRecord
+														? researchRecord.terms.concat(
+															sync.termLists[index].terms.filter(termFromList =>
+																!researchRecord.terms.find(term => term.phrase === termFromList.phrase)
+															)
+														)
+														: sync.termLists[index].terms,
+													replaceExisting: true,
+												}, {
+													type: "activate",
+												} ],
+											}, {
+												type: "toggleInTab",
 												highlightsShownOn: true,
-											},
+											} ],
 										});
 										onSuccess();
 									},
