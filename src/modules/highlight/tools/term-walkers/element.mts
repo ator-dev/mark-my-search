@@ -8,12 +8,23 @@ import { EleClass, EleID, elementsPurgeClass, getNodeFinal, getTermClass, isVisi
 import type { MatchTerm, TermTokens } from "/dist/modules/match-term.mjs";
 import { getContainerBlock } from "/dist/modules/highlight/common/container-blocks.mjs";
 import { elementsRemakeUnfocusable } from "/dist/modules/highlight/engines/element/common.mjs";
+import { StyleManager } from "/dist/modules/style-manager.mjs";
+import { HTMLStylesheet } from "/dist/modules/stylesheets/html.mjs";
+import { Styles } from "/dist/modules/highlight/tools/term-walker/common.mjs";
 
 class TermWalker {
 	readonly #termTokens: TermTokens;
+
+	readonly #styleManager = new StyleManager(new HTMLStylesheet(document.head));
 	
 	constructor (termTokens: TermTokens) {
 		this.#termTokens = termTokens;
+		this.#styleManager.setStyle(Styles.mainCSS);
+	}
+
+	deactivate () {
+		this.cleanup();
+		this.#styleManager.deactivate();
 	}
 
 	step (reverse: boolean, stepNotJump: boolean, term: MatchTerm | null): HTMLElement | null {
@@ -24,9 +35,21 @@ class TermWalker {
 		}
 	}
 
-	deactivate () {}
+	cleanup () {
+		this.elementsReMakeUnfocusable();
+	}
 
-	cleanup () {}
+	/**
+	 * Reverts the focusability of elements made temporarily focusable and marked as such using a class name.
+	 * Sets their `tabIndex` to -1.
+	 * @param root If supplied, an element to revert focusability under in the DOM tree (inclusive).
+	 */
+	elementsReMakeUnfocusable (root: HTMLElement = document.body) {
+		for (const element of root.querySelectorAll<HTMLElement>(`.${EleClass.FOCUS_REVERT}`)) {
+			element.tabIndex = -1;
+			element.classList.remove(EleClass.FOCUS_REVERT);
+		}
+	}
 
 	/**
 	 * Scrolls to and focuses the next block containing an occurrence of a term in the document, from the current selection position.

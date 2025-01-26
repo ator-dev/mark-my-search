@@ -7,17 +7,21 @@
 import { EleClass, EleID, elementsPurgeClass, getNodeFinal, isVisible } from "/dist/modules/common.mjs";
 import type { MatchTerm, TermTokens } from "/dist/modules/match-term.mjs";
 import { ElementProperty, type ElementInfo } from "/dist/modules/highlight/models/tree-cache/element-properties.mjs";
+import { StyleManager } from "/dist/modules/style-manager.mjs";
+import { HTMLStylesheet } from "/dist/modules/stylesheets/html.mjs";
 
 class TermWalker {
 	readonly #termTokens: TermTokens;
+
+	readonly #styleManager = new StyleManager(new HTMLStylesheet(document.head));
 
 	constructor (termTokens: TermTokens) {
 		this.#termTokens = termTokens;
 	}
 
-	deactivate () {}
-
-	cleanup () {}
+	deactivate () {
+		this.#styleManager.deactivate();
+	}
 
 	/**
 	 * Scrolls to the next (downwards) occurrence of a term in the document. Testing begins from the current selection position.
@@ -80,6 +84,8 @@ class TermWalker {
 			}
 		}
 	};
+
+	cleanup () {}
 }
 
 export { TermWalker };
