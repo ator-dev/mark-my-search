@@ -87,7 +87,7 @@ const getMatchModeFromClassList = (
 	case: classListContains(EleClass.MATCH_CASE),
 	stem: classListContains(EleClass.MATCH_STEM),
 	whole: classListContains(EleClass.MATCH_WHOLE),
-	diacritics: classListContains(EleClass.MATCH_DIACRITICS),
+	diacritics: !classListContains(EleClass.MATCH_DIACRITICS), // TODO: Un-invert.
 });
 
 const applyMatchModeToClassList = (
@@ -98,7 +98,7 @@ const applyMatchModeToClassList = (
 	classListToggle(EleClass.MATCH_CASE, matchMode.case);
 	classListToggle(EleClass.MATCH_STEM, matchMode.stem);
 	classListToggle(EleClass.MATCH_WHOLE, matchMode.whole);
-	classListToggle(EleClass.MATCH_DIACRITICS, matchMode.diacritics);
+	classListToggle(EleClass.MATCH_DIACRITICS, !matchMode.diacritics); // TODO: Un-invert.
 };
 
 const getInputIdSequential = () => CommonEleID.INPUT + getIdSequential.next().value.toString();

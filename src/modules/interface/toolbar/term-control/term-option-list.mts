@@ -52,7 +52,7 @@ class TermOptionList {
 					regex: "Regex Mode",
 				};
 				const title = titles[matchType];
-				const { optionElement, checkbox, toggle, makeFocusable } = this.createOption(matchType, title, onActivated);
+				const { optionElement, checkbox, toggle, makeFocusable } = this.createOption(matchType, title, onActivated, matchType === "diacritics" /* TODO: Un-invert. */);
 				this.#optionList.appendChild(optionElement);
 				this.#checkboxes.push(checkbox);
 				return {
@@ -237,6 +237,7 @@ class TermOptionList {
 		matchType: keyof MatchMode,
 		text: string,
 		onActivated: (matchType: string, checked: boolean) => void,
+		invert?: boolean,
 	) {
 		const option = document.createElement("label");
 		option.classList.add(EleClass.OPTION, getMatchModeOptionClass(matchType));
@@ -245,10 +246,10 @@ class TermOptionList {
 		const checkbox = document.createElement("input");
 		checkbox.type = "checkbox";
 		checkbox.id = id;
-		checkbox.checked = this.#matchMode[matchType];
+		checkbox.checked = this.#matchMode[matchType] === !invert;
 		checkbox.tabIndex = -1;
 		checkbox.addEventListener("change", () => {
-			onActivated(matchType, checkbox.checked);
+			onActivated(matchType, checkbox.checked === !invert);
 		});
 		checkbox.addEventListener("keydown", event => {
 			if (event.key === " ") {

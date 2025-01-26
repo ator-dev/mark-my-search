@@ -22,6 +22,7 @@ type OptionsInfo = Array<{
 			label: string
 			tooltip?: string
 			type: PreferenceType
+			invert?: boolean
 		}>>
 		type?: PreferenceType
 	}>>
@@ -131,12 +132,12 @@ label[for]:hover
 				Object.keys(preferences).forEach(preferenceKey => {
 					const preferenceInfo = preferences[preferenceKey];
 					const className = `${optionKey}-${preferenceKey}`;
-					const input = document.getElementsByClassName(className)[0];
+					const input = document.getElementsByClassName(className)[0] as HTMLInputElement | null;
 					if (!input) {
 						return;
 					}
-					const valueEnteredString = input["value"] as string;
-					const valueEnteredBool = input["checked"] as boolean;
+					const valueEnteredString = input.value;
+					const valueEnteredBool = input.checked !== (input.dataset.inverted !== undefined);
 					const valueEntered = preferenceInfo.type === PreferenceType.BOOLEAN ? valueEnteredBool : valueEnteredString;
 					sync[optionKey][preferenceKey] = ((type: PreferenceType) => { // Convert value for storage.
 						if (type === PreferenceType.ARRAY || type === PreferenceType.ARRAY_NUMBER) {
@@ -208,12 +209,15 @@ label[for]:hover
 					input.disabled = true;
 				} else {
 					const propertyKey = preferenceInfo.type === PreferenceType.BOOLEAN ? "checked" : "value";
-					inputDefault[propertyKey as string] = valueDefault;
-					input[propertyKey as string] = value;
-					valuesCurrent[optionKey][preferenceKey] = input[propertyKey];
+					inputDefault[propertyKey as string] = preferenceInfo.invert ? !valueDefault : valueDefault;
+					input[propertyKey as string] = preferenceInfo.invert ? !value : value;
+					if (preferenceInfo.invert) {
+						input.dataset.inverted = "";
+					}
+					valuesCurrent[optionKey][preferenceKey] = preferenceInfo.invert ? !input[propertyKey] : input[propertyKey];
 					input.addEventListener("input", () =>
 						preferenceLabel.classList[
-							input[propertyKey] === valuesCurrent[optionKey][preferenceKey] ? "remove" : "add"
+							(preferenceInfo.invert ? !input[propertyKey] : input[propertyKey]) === valuesCurrent[optionKey][preferenceKey] ? "remove" : "add"
 						](OptionClass.MODIFIED)
 					);
 				}
@@ -383,17 +387,18 @@ PAINT
 							label: "Default case sensitivity",
 							type: PreferenceType.BOOLEAN,
 						},
-						stem: {
-							label: "Default word stemming",
-							type: PreferenceType.BOOLEAN,
-						},
 						whole: {
 							label: "Default whole word matching",
 							type: PreferenceType.BOOLEAN,
 						},
-						diacritics: {
-							label: "Default diacritics matching (ignore accents)",
+						stem: {
+							label: "Default word stemming",
 							type: PreferenceType.BOOLEAN,
+						},
+						diacritics: {
+							label: "Default diacritics sensitivity",
+							type: PreferenceType.BOOLEAN,
+							invert: true, // TODO: Un-invert.
 						},
 						regex: {
 							label: "Use custom regular expressions by default (advanced)",

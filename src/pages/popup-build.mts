@@ -23,7 +23,7 @@ const loadPopup = (() => {
 	 * @param labelText Text to display in the checkbox label.
 	 * @returns The resulting info object.
 	 */
-	const getMatchModeInteractionInfo = (mode: keyof MatchMode, labelText: string): PageInteractionObjectRowInfo => ({
+	const getMatchModeInteractionInfo = (mode: keyof MatchMode, labelText: string, invert?: boolean): PageInteractionObjectRowInfo => ({
 		className: "type",
 		key: `matchMode.${mode}`,
 		label: {
@@ -32,13 +32,13 @@ const loadPopup = (() => {
 		checkbox: {
 			onLoad: async (setChecked, objectIndex, containerIndex) => {
 				const sync = await storageGet("sync", [ StorageSync.TERM_LISTS ]);
-				setChecked(sync.termLists[containerIndex].terms[objectIndex].matchMode[mode]);
+				setChecked(sync.termLists[containerIndex].terms[objectIndex].matchMode[mode] === !invert);
 			},
 			onToggle: (checked, objectIndex, containerIndex) => {
 				storageGet("sync", [ StorageSync.TERM_LISTS ]).then(sync => {
 					const oldTerm = sync.termLists[containerIndex].terms[objectIndex];
 					const matchMode = Object.assign({}, oldTerm.matchMode) as MatchMode;
-					matchMode[mode] = checked;
+					matchMode[mode] = checked === !invert;
 					sync.termLists[containerIndex].terms[objectIndex] = new MatchTerm(oldTerm.phrase, matchMode);
 					storageSet("sync", sync);
 				});
@@ -451,7 +451,7 @@ const loadPopup = (() => {
 											getMatchModeInteractionInfo("case", "Case Sensitive"),
 											getMatchModeInteractionInfo("whole", "Whole Words"),
 											getMatchModeInteractionInfo("stem", "Stemming"),
-											getMatchModeInteractionInfo("diacritics", "Diacritics Insensitive"),
+											getMatchModeInteractionInfo("diacritics", "Diacritics Sensitive", true),  // TODO: Un-invert.
 											getMatchModeInteractionInfo("regex", "Regular Expression"),
 										],
 									},

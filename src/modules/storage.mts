@@ -147,7 +147,7 @@ export const optionsDefault: StorageSyncValues = {
 		case: false,
 		stem: true,
 		whole: false,
-		diacritics: false,
+		diacritics: false, // TODO: Un-invert.
 	},
 	showHighlights: {
 		default: true,
