@@ -6,16 +6,24 @@
 
 import { EleClass, EleID, elementsPurgeClass, getElementYRelative, getTermClass } from "/dist/modules/common.mjs";
 import { getContainerBlock } from "/dist/modules/highlight/common/container-blocks.mjs";
+import { Styles } from "/dist/modules/highlight/tools/term-marker/common.mjs";
 import type { MatchTerm, TermTokens } from "/dist/modules/match-term.mjs";
+import { StyleManager } from "/dist/modules/style-manager.mjs";
+import { HTMLStylesheet } from "/dist/modules/stylesheets/html.mjs";
 
 class TermMarker {
 	readonly #termTokens: TermTokens;
 
+	readonly #styleManager = new StyleManager(new HTMLStylesheet(document.head));
+	readonly #termsStyleManager = new StyleManager(new HTMLStylesheet(document.head));
+	readonly #scrollGutter: HTMLElement;
+
 	constructor (termTokens: TermTokens) {
 		this.#termTokens = termTokens;
-		const gutter = document.createElement("div");
-		gutter.id = EleID.MARKER_GUTTER;
-		document.body.insertAdjacentElement("afterend", gutter);
+		this.#styleManager.setStyle(Styles.mainCSS);
+		this.#scrollGutter = document.createElement("div");
+		this.#scrollGutter.id = EleID.MARKER_GUTTER;
+		document.body.insertAdjacentElement("afterend", this.#scrollGutter);
 	}
 
 	/**
@@ -25,11 +33,11 @@ class TermMarker {
 	 * @param hues Color hues for term styles to cycle through.
 	 */
 	insert (terms: ReadonlyArray<MatchTerm>, hues: ReadonlyArray<number>) {
+		this.setTermsStyle(terms, hues);
 		if (terms.length === 0) {
 			return; // No terms results in an empty selector, which is not allowed.
 		}
 		const regexMatchTermSelector = new RegExp(`\\b${EleClass.TERM}(?:-\\w+)+\\b`);
-		const gutter = document.getElementById(EleID.MARKER_GUTTER) as HTMLElement;
 		const containersInfo: Array<{
 			container: HTMLElement
 			termsAdded: Set<string>
@@ -48,7 +56,7 @@ class TermMarker {
 			if (containerIdx !== -1) {
 				if (containersInfo[containerIdx].container === container) {
 					if (containersInfo[containerIdx].termsAdded.has(this.getTermSelector(className))) {
-						return;
+						continue;
 					} else {
 						const termsAddedCount = Array.from(containersInfo[containerIdx].termsAdded).length;
 						markerCss += `padding-left: ${termsAddedCount * 5}px; z-index: ${termsAddedCount * -1}`;
@@ -63,13 +71,17 @@ class TermMarker {
 			}
 			markersHtml += `<div class="${className}" top="${yRelative}" style="${markerCss}"></div>`;
 		}
-		gutter.replaceChildren(); // Removes children, since inner HTML replacement does not for some reason
-		gutter.innerHTML = markersHtml;
+		this.#scrollGutter.replaceChildren(); // Removes children, since inner HTML replacement does not for some reason
+		this.#scrollGutter.innerHTML = markersHtml;
+	}
+
+	setTermsStyle (terms: ReadonlyArray<MatchTerm>, hues: ReadonlyArray<number>) {
+		const styles = terms.map((term, i) => Styles.getTermCSS(term, i, hues, this.#termTokens));
+		this.#termsStyleManager.setStyle(styles.join(""));
 	}
 
 	deactivate () {
-		const gutter = document.getElementById(EleID.MARKER_GUTTER) as HTMLElement;
-		gutter.remove();
+		this.#scrollGutter.remove();
 	}
 
 	/**
