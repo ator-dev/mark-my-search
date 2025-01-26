@@ -4,10 +4,12 @@
  * Licensed under the EUPL-1.2-or-later.
  */
 
-import { EleClass, elementsPurgeClass, getTermClass } from "/dist/modules/common.mjs";
+import { EleClass, EleID, elementsPurgeClass, getTermClass } from "/dist/modules/common.mjs";
 import { highlightTags } from "/dist/modules/highlight/common/highlight-tags.mjs";
 import { elementsRemakeUnfocusable } from "/dist/modules/highlight/engines/element/common.mjs";
 import type { MatchTerm, TermPatterns, TermTokens } from "/dist/modules/match-term.mjs";
+import { StyleManager } from "/dist/modules/style-manager.mjs";
+import { HTMLStylesheet } from "/dist/modules/stylesheets/html.mjs";
 
 type MutationUpdates = { observe: () => void, disconnect: () => void }
 
@@ -71,18 +73,29 @@ class ElementEngine {
 	readonly #termTokens: TermTokens;
 	readonly #termPatterns: TermPatterns;
 
+	readonly #mutationUpdates: MutationUpdates;
+
 	readonly #highlightingUpdatedListeners = new Set<() => void>();
+
+	readonly #styleManager = new StyleManager(new HTMLStylesheet(document.head));
+	readonly #termStyleManagerMap = new Map<MatchTerm, StyleManager<Record<never, never>>>();
+
+	readonly #rejectSelector = Array.from(highlightTags.reject).join(", ");
 
 	readonly terms: { current: ReadonlyArray<MatchTerm> } = { current: [] };
 	readonly hues: { current: ReadonlyArray<number> } = { current: [] };
 
-	readonly #mutationUpdates: MutationUpdates;
-
-	readonly #rejectSelector = Array.from(highlightTags.reject).join(", ");
-
 	constructor (termTokens: TermTokens, termPatterns: TermPatterns) {
 		this.#termTokens = termTokens;
 		this.#termPatterns = termPatterns;
+		this.#styleManager.setStyle(`
+mms-h {
+	font: inherit !important;
+	border-radius: 2px !important;
+	visibility: visible !important;
+}
+`
+		);
 		this.#mutationUpdates = this.getMutationUpdates();
 	}
 
@@ -103,8 +116,10 @@ class ElementEngine {
 	startHighlighting (terms: ReadonlyArray<MatchTerm>, hues: ReadonlyArray<number>) {
 		this.#mutationUpdates.disconnect();
 		this.elementsRestore();
+		this.removeTermStyles();
 		this.terms.current = terms;
 		this.hues.current = hues;
+		this.addTermStyles(terms, hues);
 		this.generateHighlightsUnderNode(terms, document.body);
 		this.#mutationUpdates.observe();
 		for (const listener of this.#highlightingUpdatedListeners) {
@@ -115,12 +130,44 @@ class ElementEngine {
 	endHighlighting () {
 		this.#mutationUpdates.disconnect();
 		this.elementsRestore();
+		this.removeTermStyles();
 		this.terms.current = [];
 		this.hues.current = [];
 	}
 
 	deactivate () {
 		this.endHighlighting();
+	}
+
+	addTermStyles (terms: ReadonlyArray<MatchTerm>, hues: ReadonlyArray<number>) {
+		for (let i = 0; i < terms.length; i++) {
+			const styleManager = new StyleManager(new HTMLStylesheet(document.head));
+			styleManager.setStyle(this.getTermCSS(terms, hues, i));
+			this.#termStyleManagerMap.set(terms[i], styleManager);
+		}
+	}
+
+	removeTermStyles () {
+		for (const styleManager of this.#termStyleManagerMap.values()) {
+			styleManager.deactivate();
+		}
+		this.#termStyleManagerMap.clear();
+	}
+
+	getTermCSS (terms: ReadonlyArray<MatchTerm>, hues: ReadonlyArray<number>, termIndex: number) {
+		const term = terms[termIndex];
+		const hue = hues[termIndex % hues.length];
+		const cycle = Math.floor(termIndex / hues.length);
+		return `
+#${EleID.BAR} ~ body .${EleClass.FOCUS_CONTAINER} mms-h.${getTermClass(term, this.#termTokens)},
+#${EleID.BAR}.${EleClass.HIGHLIGHTS_SHOWN} ~ body mms-h.${getTermClass(term, this.#termTokens)} {
+	background: ${this.getTermBackgroundStyle(
+		`hsl(${hue} 100% 60% / 0.4)`, `hsl(${hue} 100% 88% / 0.4)`, cycle,
+	)} !important;
+	box-shadow: 0 0 0 1px hsl(${hue} 100% 20% / 0.35) !important;
+}
+`
+		;
 	}
 
 	/**

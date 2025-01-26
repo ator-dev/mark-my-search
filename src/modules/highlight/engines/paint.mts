@@ -4,52 +4,83 @@
  * Licensed under the EUPL-1.2-or-later.
  */
 
-import { EleClass, EleID, getTermTokenClass } from "/dist/modules/common.mjs";
+import { EleClass, EleID, getTermClass, getTermTokenClass, Z_INDEX_MIN } from "/dist/modules/common.mjs";
 import { highlightTags } from "/dist/modules/highlight/common/highlight-tags.mjs";
+import TermCSS from "/dist/modules/highlight/common/term-css.mjs";
 import { ElementProperty, type ElementInfo } from "/dist/modules/highlight/models/tree-cache/element-properties.mjs";
 import type { HighlightBox, HighlightFlow } from "/dist/modules/highlight/models/tree-cache/paint.mjs";
 import type { MatchTerm, TermPatterns, TermTokens } from "/dist/modules/match-term.mjs";
+import { StyleManager } from "/dist/modules/style-manager.mjs";
+import { HTMLStylesheet } from "/dist/modules/stylesheets/html.mjs";
 
 type StyleUpdates = { observe: (element: Element) => void, disconnectAll: () => void }
 type MutationUpdates = { observe: () => void, disconnect: () => void }
 
-interface HighlightStyleRuleInfo {
-	rule: string
-	element: Element
-}
-
-enum OwnEleID {
-	STYLE_PAINT = "markmysearch-style-paint",
-}
-
 class PaintEngine {
 	readonly #termTokens: TermTokens;
 	readonly #termPatterns: TermPatterns;
+	readonly #rejectSelector = Array.from(highlightTags.reject).join(", ");
 
 	readonly #highlightingUpdatedListeners = new Set<() => void>();
-
-	readonly terms: { current: ReadonlyArray<MatchTerm> } = { current: [] };
-	readonly hues: { current: ReadonlyArray<number> } = { current: [] };
 	
 	// eslint-disable-next-line no-constant-condition
 	readonly #method = true ? (CSS["paintWorklet"]?.addModule ? "paint" as const : "element" as const) : "url" as const;
 	readonly #styleUpdates: StyleUpdates;
 	readonly #mutationUpdates: MutationUpdates;
 
-	static readonly #highlightingIds = (function* () {
+	readonly #highlightingIds = (function* () {
 		let id = 0;
 		while (true) {
 			yield String(id++);
 		}
 	})();
-	
+
+	readonly #elementStyleRuleMap = new Map<HTMLElement, string>();
+
 	readonly #elementsVisible = new Set<Element>();
-	readonly #rejectSelector = Array.from(highlightTags.reject).join(", ");
+
+	readonly #styleManager = new StyleManager(new HTMLStylesheet(document.head));
+	readonly #element_drawContainersParent: HTMLElement | null = null;
+	readonly #element_styleManager: StyleManager<Record<never, never>> | null = null;
+	readonly #element_termStyleManagerMap = new Map<MatchTerm, StyleManager<Record<never, never>>>();
+
+	readonly terms: { current: ReadonlyArray<MatchTerm> } = { current: [] };
+	readonly hues: { current: ReadonlyArray<number> } = { current: [] };
 
 	constructor (termTokens: TermTokens, termPatterns: TermPatterns) {
 		this.#termTokens = termTokens;
 		this.#termPatterns = termPatterns;
 		this.#styleUpdates = this.getStyleUpdates();
+		this.#mutationUpdates = this.getMutationUpdates();
+		if (this.#method === "element") {
+			this.#element_drawContainersParent = document.createElement("div");
+			this.#element_drawContainersParent.id = EleID.DRAW_CONTAINER;
+			document.body.insertAdjacentElement("afterend", this.#element_drawContainersParent);
+			this.#element_styleManager = new StyleManager(new HTMLStylesheet(document.head));
+			this.#element_styleManager.setStyle(`
+#${ EleID.DRAW_CONTAINER } {
+	& {
+		position: fixed !important;
+		width: 100% !important;
+		height: 100% !important;
+		top: 100% !important;
+		z-index: ${ Z_INDEX_MIN } !important;
+	}
+	& > * {
+		position: fixed !important;
+		width: 100% !important;
+		height: 100% !important;
+	}
+}
+
+#${ EleID.BAR }.${ EleClass.HIGHLIGHTS_SHOWN } ~ #${ EleID.DRAW_CONTAINER } .${ EleClass.TERM } {
+	outline: 2px solid hsl(0 0% 0% / 0.1) !important;
+	outline-offset: -2px !important;
+	border-radius: 2px !important;
+}
+`
+			);
+		}
 	}
 
 	getTermBackgroundStyle (colorA: string, colorB: string, cycle: number) {
@@ -70,42 +101,80 @@ class PaintEngine {
 		this.removeBoxesInfoForTerms(termsToPurge);
 		this.terms.current = terms;
 		this.hues.current = hues;
+		if (this.#method === "element") {
+			for (const styleManager of this.#element_termStyleManagerMap.values()) {
+				styleManager.deactivate();
+			}
+			this.#element_termStyleManagerMap.clear();
+			const getTermCSS = (terms: ReadonlyArray<MatchTerm>, hues: ReadonlyArray<number>, termIndex: number): string => {
+				const term = terms[termIndex];
+				const hue = hues[termIndex % hues.length];
+				const cycle = Math.floor(termIndex / hues.length);
+				const selector = `#${ EleID.BAR }.${ EleClass.HIGHLIGHTS_SHOWN } ~ #${ EleID.DRAW_CONTAINER } .${
+					getTermClass(term, this.#termTokens)
+				}`;
+				const backgroundStyle = TermCSS.getHorizontalStyle(
+					`hsl(${ hue } 100% 60% / 0.4)`,
+					`hsl(${ hue } 100% 88% / 0.4)`,
+					cycle,
+				);
+				return`${ selector } { background: ${ backgroundStyle } !important; }`;
+			};
+			for (let i = 0; i < terms.length; i++) {
+				const styleManager = new StyleManager(new HTMLStylesheet(document.head));
+				styleManager.setStyle(getTermCSS(terms, hues, i));
+				this.#element_termStyleManagerMap.set(terms[i], styleManager);
+			}
+		}
 		this.calculateBoxesInfo(terms, document.body);
 		this.#mutationUpdates.observe();
-		this.updateStyle(Array.from(new Set(
+		for (const ancestor of new Set(
 			Array.from(this.#elementsVisible).map(element => this.getAncestorHighlightable(element.firstChild as Node))
-		)).flatMap(ancestor => this.getStyleRules(ancestor, false, terms, hues)));
+		)) {
+			this.cacheStyleRulesFor(ancestor, false, terms, hues);
+		}
+		this.applyStyleRules();
+		for (const listener of this.#highlightingUpdatedListeners) {
+			listener();
+		}
 	}
 
 	endHighlighting () {
 		this.extendCache(document.body);
 		this.removeBoxesInfoForTerms();
+		if (this.#method === "element") {
+			for (const styleManager of this.#element_termStyleManagerMap.values()) {
+				styleManager.deactivate();
+			}
+			this.#element_termStyleManagerMap.clear();
+		}
 		this.terms.current = [];
 		this.hues.current = [];
 	}
 
 	deactivate () {
 		this.endHighlighting();
+		// NOTE: This may not clean up everything (yet).
+		this.#styleManager.deactivate();
+		this.#element_drawContainersParent?.remove();
+		this.#element_styleManager?.deactivate();
 	}
 
 	getStyleUpdates (): StyleUpdates {
 		const shiftObserver = new ResizeObserver(entries => {
-			const styleRules: Array<HighlightStyleRuleInfo> = entries.flatMap(entry =>
-				this.getStyleRules(this.getAncestorHighlightable(entry.target.firstChild as Node), true, this.terms.current, this.hues.current)
-			);
-			if (styleRules.length) {
-				this.updateStyle(styleRules);
+			for (const entry of entries) {
+				this.cacheStyleRulesFor(this.getAncestorHighlightable(entry.target.firstChild as Node), true, this.terms.current, this.hues.current);
 			}
+			this.applyStyleRules();
 		});
 		const visibilityObserver = new IntersectionObserver(entries => {
-			let styleRules: Array<HighlightStyleRuleInfo> = [];
 			for (const entry of entries) {
 				if (entry.isIntersecting) {
 					//console.log(entry.target, "intersecting");
 					if (entry.target[ElementProperty.INFO]) {
 						this.#elementsVisible.add(entry.target);
 						shiftObserver.observe(entry.target);
-						styleRules = styleRules.concat(this.getStyleRules(this.getAncestorHighlightable(entry.target.firstChild as Node), false, this.terms.current, this.hues.current));
+						this.cacheStyleRulesFor(this.getAncestorHighlightable(entry.target.firstChild as Node), false, this.terms.current, this.hues.current);
 					}
 				} else {
 					//console.log(entry.target, "not intersecting");
@@ -116,9 +185,7 @@ class PaintEngine {
 					shiftObserver.unobserve(entry.target);
 				}
 			}
-			if (styleRules.length) {
-				this.updateStyle(styleRules);
-			}
+			this.applyStyleRules();
 		}, { rootMargin: "400px" });
 		return {
 			observe: element => visibilityObserver.observe(element),
@@ -130,23 +197,11 @@ class PaintEngine {
 		};
 	}
 	
-	updateStyle (styleRules: ReadonlyArray<HighlightStyleRuleInfo>) {
-		const styleSheet = (document.getElementById(OwnEleID.STYLE_PAINT) as HTMLStyleElement).sheet as CSSStyleSheet;
-		for (const { rule, element } of styleRules) {
-			const elementInfo = element[ElementProperty.INFO] as ElementInfo;
-			if (elementInfo.styleRuleIdx === -1) {
-				elementInfo.styleRuleIdx = styleSheet.cssRules.length;
-			} else {
-				if (styleSheet.cssRules.item(elementInfo.styleRuleIdx)?.cssText === rule) {
-					return;
-				}
-				styleSheet.deleteRule(elementInfo.styleRuleIdx);
-			}
-			styleSheet.insertRule(rule, elementInfo.styleRuleIdx);
-		}
+	applyStyleRules () {
+		this.#styleManager.setStyle(Array.from(this.#elementStyleRuleMap.values()).join("\n"));
 	};
 
-	getStyleRules: (root: Element, recurse: boolean, terms: ReadonlyArray<MatchTerm>, hues: ReadonlyArray<number>) => Array<HighlightStyleRuleInfo> = (() => {
+	cacheStyleRulesFor: (root: HTMLElement, recurse: boolean, terms: ReadonlyArray<MatchTerm>, hues: ReadonlyArray<number>) => void = (() => {
 		const calculateBoxes = (owner: Element, element: Element, range: Range): Array<HighlightBox> => {
 			const elementInfo = element[ElementProperty.INFO] as ElementInfo;
 			if (!elementInfo || elementInfo.flows.every(flow => flow.boxesInfo.length === 0)) {
@@ -200,20 +255,17 @@ class PaintEngine {
 			))
 		;
 	
-		const collectStyleRules = (element: Element, recurse: boolean,
-			range: Range, styleRules: Array<HighlightStyleRuleInfo>, terms: ReadonlyArray<MatchTerm>, hues: ReadonlyArray<number>) => {
+		const cacheStyleRulesFor = (element: HTMLElement, recurse: boolean,
+			range: Range, terms: ReadonlyArray<MatchTerm>, hues: ReadonlyArray<number>) => {
 			const elementInfo = element[ElementProperty.INFO] as ElementInfo;
 			const boxes: Array<HighlightBox> = getBoxesOwned(element, element, range);
 			if (boxes.length) {
-				styleRules.push({
-					rule: this.constructHighlightStyleRule(elementInfo.id, boxes, terms, hues),
-					element,
-				});
+				this.#elementStyleRuleMap.set(element, this.constructHighlightStyleRule(elementInfo.id, boxes, terms, hues));
 			}
 			if (recurse) {
 				for (const child of element.children) {
-					if (child[ElementProperty.INFO]) {
-						collectStyleRules(child, recurse, range, styleRules, terms, hues);
+					if (child instanceof HTMLElement && child[ElementProperty.INFO]) {
+						cacheStyleRulesFor(child, recurse, range, terms, hues);
 					}
 				}
 			}
@@ -252,24 +304,19 @@ class PaintEngine {
 			? (root, recurse, terms, hues) => {
 				const containers: Array<Element> = [];
 				collectElements(root, recurse, document.createRange(), containers);
-				const parent = document.getElementById(EleID.DRAW_CONTAINER) as Element;
 				containers.forEach(container => {
 					const containerExisting = document.getElementById(container.id);
 					if (containerExisting) {
 						containerExisting.remove();
 					}
-					parent.appendChild(container);
+					this.#element_drawContainersParent!.appendChild(container);
 				});
-				const styleRules: Array<HighlightStyleRuleInfo> = [];
 				// 'root' must have [elementInfo].
-				collectStyleRules(root, recurse, document.createRange(), styleRules, terms, hues);
-				return styleRules;
+				cacheStyleRulesFor(root, recurse, document.createRange(), terms, hues);
 			}
 			: (root, recurse, terms, hues) => {
-				const styleRules: Array<HighlightStyleRuleInfo> = [];
 				// 'root' must have [elementInfo].
-				collectStyleRules(root, recurse, document.createRange(), styleRules, terms, hues);
-				return styleRules;
+				cacheStyleRulesFor(root, recurse, document.createRange(), terms, hues);
 			};
 	})();
 
@@ -363,7 +410,6 @@ class PaintEngine {
 		if (!element[ElementProperty.INFO]) {
 			element[ElementProperty.INFO] = {
 				id: "",
-				styleRuleIdx: -1,
 				isPaintable: this.#method === "paint" ? !element.closest("a") : true,
 				flows: [],
 			} as ElementInfo;
@@ -531,7 +577,7 @@ class PaintEngine {
 			this.#styleUpdates.observe(ancestorHighlightable);
 			if ((ancestorHighlightable[ElementProperty.INFO] as ElementInfo).id === "") {
 				const highlighting = ancestorHighlightable[ElementProperty.INFO] as ElementInfo;
-				highlighting.id = PaintEngine.#highlightingIds.next().value;
+				highlighting.id = this.#highlightingIds.next().value;
 				ancestorHighlightable.setAttribute("markmysearch-h_id", highlighting.id);
 				ancestorHighlightable["markmysearch-h_id"] = highlighting.id;
 			}

@@ -8,7 +8,6 @@ import type { HighlightFlow } from "/dist/modules/highlight/models/tree-cache/pa
 
 type ElementInfo = {
 	id: string
-	styleRuleIdx: number
 	isPaintable: boolean
 	flows: Array<HighlightFlow>
 }
