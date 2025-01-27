@@ -13,15 +13,15 @@ const getAttributeName = (name: string) => "markmysearch--" + name;
 
 const highlightingIdAttr = getAttributeName("highlighting-id");
 
-class HighlightingIdGenerator {
+class HighlightingIDGenerator {
 	#count = 0;
 
-	getNextId (): number {
+	next (): number {
 		return this.#count++;
 	}
 }
 
 export {
 	getAttributeName, highlightingIdAttr,
-	HighlightingIdGenerator,
+	HighlightingIDGenerator,
 };

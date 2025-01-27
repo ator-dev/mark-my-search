@@ -10,7 +10,7 @@ import type {
 	StoreImmediate, StoreList, StoreListInterface, ConfigValues, ConfigKey,
 } from "/dist/modules/storage.mjs";
 import { StoreType, Config } from "/dist/modules/storage.mjs";
-import { compatibility, getIdSequential } from "/dist/modules/common.mjs";
+import { compatibility } from "/dist/modules/common.mjs";
 
 const isWindowInFrame = () => (
 	new URL(location.href).searchParams.get("frame") !== null
@@ -163,6 +163,14 @@ label[for]:hover
 	{ background: hsl(var(--hue) 100% 50%); height: 16px; aspect-ratio: 1; border: 1px solid hsl(0 0% 0% / 0.5); }
 		`;
 		document.head.appendChild(style);
+	};
+
+	const inputIds = new class {
+		#count = 0;
+
+		next (): string {
+			return `input-${this.#count++}`;
+		}
 	};
 
 	const getPreferenceInputs = () =>
@@ -381,7 +389,7 @@ label[for]:hover
 					}
 					preferenceRow.appendChild(cell);
 				};
-				const inputId = `input-${getIdSequential.next().value}`;
+				const inputId = inputIds.next();
 				const preferenceLabel = document.createElement("label");
 				preferenceLabel.htmlFor = inputId;
 				preferenceLabel.textContent = label;

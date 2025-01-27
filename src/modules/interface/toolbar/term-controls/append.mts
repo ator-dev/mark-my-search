@@ -9,7 +9,7 @@ import type { ToolbarTermControlInterface } from "/dist/modules/interface/toolba
 import { TermInput } from "/dist/modules/interface/toolbar/term-control/term-input.mjs";
 import { TermOptionList } from "/dist/modules/interface/toolbar/term-control/term-option-list.mjs";
 import { Control } from "/dist/modules/interface/toolbar/control.mjs";
-import type { ControlFocusArea } from "/dist/modules/interface/toolbar/common.mjs";
+import type { ControlFocusArea, InputIDGenerator } from "/dist/modules/interface/toolbar/common.mjs";
 import {
 	EleClass, applyMatchModeToClassList, getMatchModeFromClassList,
 } from "/dist/modules/interface/toolbar/common.mjs";
@@ -30,6 +30,7 @@ class TermAppendControl implements TermAbstractControl {
 	constructor (
 		controlsInfo: ControlsInfo,
 		toolbarInterface: ToolbarTermControlInterface,
+		inputIds: InputIDGenerator,
 		termsBox: ArrayAccessor<MatchTerm> & ArrayMutator<MatchTerm>,
 	) {
 		this.#toolbarInterface = toolbarInterface;
@@ -60,6 +61,7 @@ class TermAppendControl implements TermAbstractControl {
 			controlsInfo,
 			this,
 			toolbarInterface,
+			inputIds,
 		);
 		if (controlContainerTemp) {
 			setUpControl(controlContainerTemp);

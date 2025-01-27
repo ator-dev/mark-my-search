@@ -121,7 +121,6 @@ enum EleID {
 	MARKER_GUTTER = "markmysearch--markers",
 	DRAW_CONTAINER = "markmysearch--draw-container",
 	DRAW_ELEMENT = "markmysearch--draw-",
-	INPUT = "markmysearch--input-",
 }
 
 enum EleClass {
@@ -212,14 +211,6 @@ const getTermClass = (term: MatchTerm, termTokens: TermTokens): string => EleCla
 const getTermTokenClass = (termToken: string): string => EleClass.TERM + "-" + termToken;
 
 const getTermClassToken = (termClass: string) => termClass.slice(EleClass.TERM.length + 1);
-
-// TODO: Instantiate this in specific places and pass it around, rather than using global index.
-const getIdSequential = (function* () {
-	let id = 0;
-	while (true) {
-		yield id++;
-	}
-})();
 
 interface RWContainer<T> extends RContainer<T>, WContainer<T> {
 	current: T,
@@ -420,7 +411,6 @@ export {
 	getElementTagsSet,
 	getNodeFinal, isVisible, getElementYRelative, elementsPurgeClass, focusClosest,
 	getTermClass, getTermTokenClass, getTermClassToken,
-	getIdSequential,
 	type RWContainer, type RContainer, type WContainer, createContainer,
 	type AllReadonly, type StopReadonly,
 	type FromEntries, type Entries,

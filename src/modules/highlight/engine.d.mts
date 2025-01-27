@@ -21,13 +21,7 @@ interface AbstractEngine extends Highlighter {
 	readonly getHighlightedElements: () => Iterable<HTMLElement>
 }
 
-interface Highlighter extends HighlighterCSSInterface, HighlightingInterface {}
-
-interface HighlighterCSSInterface {
-	readonly getTermBackgroundStyle: (colorA: string, colorB: string, cycle: number) => string
-}
-
-interface HighlightingInterface {
+interface Highlighter extends HighlightingObservable, HighlightingStyles {
 	/**
 	 * Removes previous highlighting, then highlights the document using the terms supplied.
 	 * Disables then restarts continuous highlighting.
@@ -36,13 +30,19 @@ interface HighlightingInterface {
 	readonly startHighlighting: (terms: ReadonlyArray<MatchTerm>, hues: ReadonlyArray<number>) => void
 
 	readonly endHighlighting: () => void
+}
 
+interface HighlightingObservable {
 	readonly addHighlightingUpdatedListener: (listener: () => void) => void
+}
+
+interface HighlightingStyles {
+	readonly getTermBackgroundStyle: (colorA: string, colorB: string, cycle: number) => string
 }
 
 export type {
 	AbstractEngine,
 	Highlighter,
-	HighlighterCSSInterface,
-	HighlightingInterface,
+	HighlightingObservable,
+	HighlightingStyles,
 };

@@ -7,9 +7,7 @@
 import type { ControlButtonName } from "/dist/modules/interface/toolbar.d.mjs";
 import { type UserCommand, parseUserCommand } from "/dist/modules/commands.mjs";
 import type { MatchMode } from "/dist/modules/match-term.mjs";
-import { EleID as CommonEleID } from "/dist/modules/common.mjs";
 import type { ControlsInfo } from "/dist/content.mjs";
-import { getIdSequential } from "/dist/modules/common.mjs";
 
 type BarLook = ControlsInfo["barLook"]
 
@@ -82,7 +80,7 @@ const getMatchModeOptionClass = (matchType: keyof MatchMode) => EleClass.OPTION 
 
 const getMatchModeFromClassList = (
 	classListContains: (token: typeof EleClass[keyof typeof EleClass]) => boolean,
-) => ({
+): MatchMode => ({
 	regex: classListContains(EleClass.MATCH_REGEX),
 	case: classListContains(EleClass.MATCH_CASE),
 	stem: classListContains(EleClass.MATCH_STEM),
@@ -101,7 +99,13 @@ const applyMatchModeToClassList = (
 	classListToggle(EleClass.MATCH_DIACRITICS, matchMode.diacritics);
 };
 
-const getInputIdSequential = () => CommonEleID.INPUT + getIdSequential.next().value.toString();
+class InputIDGenerator {
+	#count = 0;
+
+	next (): string {
+		return `input-${this.#count++}`;
+	}
+}
 
 const getControlClass = (controlName: ControlButtonName) => EleClass.CONTROL + "-" + controlName;
 
@@ -116,7 +120,7 @@ export {
 	EleID, EleClass,
 	getTermCommands,
 	getMatchModeOptionClass, getMatchModeFromClassList, applyMatchModeToClassList,
-	getInputIdSequential,
+	InputIDGenerator,
 	getControlClass, getControlPadClass,
 	passKeyEvent,
 };

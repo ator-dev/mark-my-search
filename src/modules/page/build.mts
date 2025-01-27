@@ -7,7 +7,6 @@
 import * as Manifest from "/dist/modules/manifest.mjs";
 import { Bank, Config } from "/dist/modules/storage.mjs";
 import type { MatchTerm } from "/dist/modules/match-term.mjs";
-import { getIdSequential } from "/dist/modules/common.mjs";
 import * as EmailJS from "/lib/email.min.js";
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -716,6 +715,14 @@ textarea
 		document.head.appendChild(styleTheme);
 	};
 
+	const inputIds = new class {
+		#count = 0;
+
+		next (): string {
+			return `input-${this.#count++}`;
+		}
+	};
+
 	const classNameIsPanel = (className: string) => (
 		className.split("-")[0] === "panel"
 	);
@@ -870,7 +877,7 @@ textarea
 					if (labelInfo.getText) {
 						labelInfo.getText(containerIndex).then(text => label.textContent = text);
 					}
-					const inputId = `input-${getIdSequential.next().value}`;
+					const inputId = inputIds.next();
 					label.htmlFor = inputId;
 					return [ label, inputId ];
 				}
@@ -921,7 +928,7 @@ textarea
 				}, getObjectIndex(), containerIndex);
 			}
 			if (inputInfo.onChange) {
-				input.addEventListener("change", async () =>
+				input.addEventListener("input", async () =>
 					inputInfo.onChange ? inputInfo.onChange((!inputInfo.getType || inputInfo.getType() === "checkbox") ? input.checked : (input.value as unknown as boolean), getObjectIndex(), containerIndex, true) : undefined
 				);
 			}
@@ -1014,7 +1021,7 @@ textarea
 				const getObjectIndex = () => Array.from(container.children).indexOf(objectElement);
 				const insertColumn = (columnInfo: Page.Interaction.ObjectColumnInfo) => {
 					if (columnInfo.rows.length > 1) {
-						const inputId = `input-${getIdSequential.next().value}`;
+						const inputId = inputIds.next();
 						const toggleCheckbox = document.createElement("input");
 						toggleCheckbox.type = "checkbox";
 						toggleCheckbox.id = inputId;
@@ -1345,7 +1352,7 @@ textarea
 					// TODO make function
 					const titleRow = document.createElement("label");
 					titleRow.classList.add("title-row");
-					const checkboxId = `input-${getIdSequential.next().value}`;
+					const checkboxId = inputIds.next();
 					titleRow.htmlFor = checkboxId;
 					const toggleCheckbox = document.createElement("input");
 					toggleCheckbox.type = "checkbox";

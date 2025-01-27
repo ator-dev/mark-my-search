@@ -6,7 +6,7 @@
 
 import type { AbstractMethod } from "/dist/modules/highlight/engines/paint/method.d.mjs";
 import { getBoxesOwned } from "/dist/modules/highlight/engines/paint/boxes.mjs";
-import { highlightingIdAttr, HighlightingIdGenerator } from "/dist/modules/highlight/engines/paint/common.mjs";
+import { highlightingIdAttr, HighlightingIDGenerator } from "/dist/modules/highlight/engines/paint/common.mjs";
 import type { AbstractTreeCacheEngine } from "/dist/modules/highlight/models/tree-cache.d.mjs";
 import type { AbstractFlowTracker, Flow, Span } from "/dist/modules/highlight/models/tree-cache/flow-tracker.d.mjs";
 import { FlowTracker } from "/dist/modules/highlight/models/tree-cache/flow-tracker.mjs";
@@ -102,7 +102,7 @@ class PaintEngine implements AbstractTreeCacheEngine {
 			}
 			this.observeVisibilityChangesFor(flowOwner);
 			if (!this.#elementHighlightingIdMap.has(flowOwner)) {
-				const id = highlightingIds.getNextId();
+				const id = highlightingIds.next();
 				this.#elementHighlightingIdMap.set(flowOwner, id);
 				// NOTE: Some webpages may remove unknown attributes. It is possible to check and re-apply it from cache.
 				flowOwner.setAttribute(highlightingIdAttr, id.toString());
@@ -201,7 +201,7 @@ class PaintEngine implements AbstractTreeCacheEngine {
 				visibilityObserver.disconnect();
 			};
 		}
-		const highlightingIds = new HighlightingIdGenerator();
+		const highlightingIds = new HighlightingIDGenerator();
 	}
 
 	static async getMethodModule (methodClass: PaintEngineMethod) {

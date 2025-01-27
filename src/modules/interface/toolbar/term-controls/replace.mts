@@ -8,20 +8,19 @@ import type { TermAbstractControl } from "/dist/modules/interface/toolbar/term-c
 import type { SelectionReturnTarget, ToolbarTermControlInterface } from "/dist/modules/interface/toolbar.d.mjs";
 import { TermInput } from "/dist/modules/interface/toolbar/term-control/term-input.mjs";
 import { TermOptionList } from "/dist/modules/interface/toolbar/term-control/term-option-list.mjs";
-import type { ControlFocusArea, BrowserCommands } from "/dist/modules/interface/toolbar/common.mjs";
+import type { ControlFocusArea, BrowserCommands, InputIDGenerator } from "/dist/modules/interface/toolbar/common.mjs";
 import { EleClass, applyMatchModeToClassList, getTermCommands } from "/dist/modules/interface/toolbar/common.mjs";
 import { type MatchMode, MatchTerm, type TermTokens } from "/dist/modules/match-term.mjs";
 import { getTermClass, type ArrayMutator } from "/dist/modules/common.mjs";
-import type {
-	HighlighterCounterInterface, HighlighterWalkerInterface,
-} from "/dist/modules/highlight/engine-manager.d.mjs";
+import type { HighlightingObservable } from "/dist/modules/highlight/engine.mjs";
+import type { HighlightedTermCounter, HighlightedTermWalker } from "/dist/modules/highlight/engine-manager.d.mjs";
 import type { ControlsInfo } from "/dist/content.mjs";
 
 class TermReplaceControl implements TermAbstractControl {
 	readonly #toolbarInterface: ToolbarTermControlInterface;
 	readonly #termsMutator: ArrayMutator<MatchTerm>;
 	readonly #termTokens: TermTokens;
-	readonly #highlighter: HighlighterCounterInterface & HighlighterWalkerInterface;
+	readonly #highlighter: HighlightingObservable & HighlightedTermCounter & HighlightedTermWalker;
 
 	readonly #input: TermInput;
 	readonly #optionList: TermOptionList;
@@ -45,7 +44,8 @@ class TermReplaceControl implements TermAbstractControl {
 		toolbarInterface: ToolbarTermControlInterface,
 		termsMutator: ArrayMutator<MatchTerm>,
 		termTokens: TermTokens,
-		highlighter: HighlighterCounterInterface & HighlighterWalkerInterface,
+		highlighter: HighlightingObservable & HighlightedTermCounter & HighlightedTermWalker,
+		inputIds: InputIDGenerator,
 	) {
 		this.#toolbarInterface = toolbarInterface;
 		this.#termsMutator = termsMutator;
@@ -65,6 +65,7 @@ class TermReplaceControl implements TermAbstractControl {
 			controlsInfo,
 			this,
 			toolbarInterface,
+			inputIds,
 		);
 		this.#optionList.setMatchMode(this.#term.matchMode);
 		this.#controlPad = document.createElement("span");
@@ -111,6 +112,10 @@ class TermReplaceControl implements TermAbstractControl {
 		this.#control.appendChild(this.#controlPad);
 		this.#optionList.appendTo(this.#control);
 		this.updateMatchModeClassList();
+		this.updateStatus();
+		highlighter.addHighlightingUpdatedListener(() => {
+			this.updateStatus();
+		});
 	}
 
 	getTermToken () {

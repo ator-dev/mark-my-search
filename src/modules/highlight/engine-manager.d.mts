@@ -9,7 +9,7 @@ import type { AbstractTermCounter } from "/dist/modules/highlight/tools/term-cou
 import type { MatchTerm } from "/dist/modules/match-term.mjs";
 import type { Engine, PaintEngineMethod } from "/dist/modules/common.mjs";
 
-interface AbstractEngineManager extends Highlighter, HighlighterCounterInterface, HighlighterWalkerInterface {
+interface AbstractEngineManager extends Highlighter, HighlightedTermCounter, HighlightedTermWalker {
 	readonly setEngine: (preference: Engine) => Promise<void>
 
 	readonly applyEngine: () => void
@@ -25,11 +25,11 @@ interface AbstractEngineManager extends Highlighter, HighlighterCounterInterface
 	readonly removeSpecialEngine: () => void
 }
 
-interface HighlighterCounterInterface {
+interface HighlightedTermCounter {
 	readonly termCounter: AbstractTermCounter;
 }
 
-interface HighlighterWalkerInterface {
+interface HighlightedTermWalker {
 	/**
 	 * Moves to the next (downwards) occurrence of a term in the document, beginning from the current selection position.
 	 * If an occurrence is successfully focused, the corresponding term marker in the scrollbar will be raised.
@@ -48,6 +48,6 @@ interface HighlighterWalkerInterface {
 
 export type {
 	AbstractEngineManager,
-	HighlighterCounterInterface,
-	HighlighterWalkerInterface,
+	HighlightedTermCounter,
+	HighlightedTermWalker,
 };

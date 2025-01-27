@@ -6,9 +6,8 @@
 
 import type { TermControlOptionListInterface } from "/dist/modules/interface/toolbar/term-control.d.mjs";
 import type { ToolbarTermOptionListInterface } from "/dist/modules/interface/toolbar.d.mjs";
-import {
-	EleClass, getMatchModeOptionClass, getInputIdSequential, passKeyEvent,
-} from "/dist/modules/interface/toolbar/common.mjs";
+import type { InputIDGenerator } from "/dist/modules/interface/toolbar/common.mjs";
+import { EleClass, getMatchModeOptionClass, passKeyEvent } from "/dist/modules/interface/toolbar/common.mjs";
 import type { MatchMode } from "/dist/modules/match-term.mjs";
 import type { ControlsInfo } from "/dist/content.mjs";
 
@@ -16,11 +15,12 @@ class TermOptionList {
 	readonly #controlsInfo: ControlsInfo;
 	readonly #controlInterface: TermControlOptionListInterface;
 	readonly #toolbarInterface: ToolbarTermOptionListInterface;
+	readonly #inputIds: InputIDGenerator;
 
 	readonly #optionList: HTMLElement;
 	readonly #checkboxes: Array<HTMLInputElement> = [];
 
-	#matchMode: MatchMode;
+	#matchMode: Readonly<MatchMode>;
 	
 	/**
 	 * Creates a menu structure containing clickable elements to individually toggle the matching options for the term.
@@ -34,10 +34,12 @@ class TermOptionList {
 		controlsInfo: ControlsInfo,
 		controlInterface: TermControlOptionListInterface,
 		toolbarInterface: ToolbarTermOptionListInterface,
+		inputIds: InputIDGenerator,
 	) {
 		this.#controlsInfo = controlsInfo;
 		this.#controlInterface = controlInterface;
 		this.#toolbarInterface = toolbarInterface;
+		this.#inputIds = inputIds;
 		this.#matchMode = matchMode;
 		this.#optionList = document.createElement("span");
 		this.#optionList.classList.add(EleClass.OPTION_LIST);
@@ -240,14 +242,14 @@ class TermOptionList {
 	) {
 		const option = document.createElement("label");
 		option.classList.add(EleClass.OPTION, getMatchModeOptionClass(matchType));
-		const id = getInputIdSequential();
+		const id = this.#inputIds.next();
 		option.htmlFor = id;
 		const checkbox = document.createElement("input");
 		checkbox.type = "checkbox";
 		checkbox.id = id;
 		checkbox.checked = this.#matchMode[matchType];
 		checkbox.tabIndex = -1;
-		checkbox.addEventListener("change", () => {
+		checkbox.addEventListener("input", () => {
 			onActivated(matchType, checkbox.checked);
 		});
 		checkbox.addEventListener("keydown", event => {

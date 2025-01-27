@@ -100,9 +100,6 @@ export const handleMessage = await (async () => {
 	let selectModeFocus = false;
 	let focusedIndex: number | null = null;
 	const highlighter: AbstractEngineManager = new EngineManager(termTokens, termPatterns);
-	highlighter.addHighlightingUpdatedListener(() => {
-		toolbarBox.get()?.updateStatuses();
-	});
 	type TermsBox = ArrayAccessor<MatchTerm> & ArrayMutator<MatchTerm> & ArrayObservable<MatchTerm>
 	const termsBox: TermsBox = new ArrayBox<MatchTerm>((a, b) => JSON.stringify(a) === JSON.stringify(b));
 	termsBox.addListener(terms =>
@@ -207,7 +204,6 @@ export const handleMessage = await (async () => {
 		}
 		case "useTerms": {
 			if (command.replaceExisting) {
-				// TODO: Make sure same MatchTerm objects are used for terms which are equivalent.
 				termsSyncService.updateRemoteTerms(command.terms);
 				termsBox.setItems(command.terms);
 			} else {
