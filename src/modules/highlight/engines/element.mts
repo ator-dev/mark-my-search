@@ -133,6 +133,9 @@ mms-h {
 		this.removeTermStyles();
 		this.terms.current = [];
 		this.hues.current = [];
+		for (const listener of this.#highlightingUpdatedListeners) {
+			listener();
+		}
 	}
 
 	deactivate () {
@@ -197,8 +200,11 @@ mms-h {
 				}
 				periodHighlightCount += elements.size;
 				elements.clear();
+				for (const listener of this.#highlightingUpdatedListeners) {
+					listener();
+				}
 			};
-			const highlightElementsLimited = () => {
+			const highlightElementsThrottled = () => {
 				const periodInterval = Date.now() - periodDateLast;
 				if (periodInterval > 400) {
 					const periodHighlightRate = periodHighlightCount / periodInterval; // Highlight calls per millisecond.
@@ -218,7 +224,7 @@ mms-h {
 			};
 			return new MutationObserver(mutations => {
 				//mutationUpdates.disconnect();
-				const elementsKnown: Set<HTMLElement> = new Set;
+				const elementsKnown: Set<HTMLElement> = new Set();
 				for (const mutation of mutations) {
 					const element = mutation.target.nodeType === Node.TEXT_NODE
 						? mutation.target.parentElement as HTMLElement
@@ -235,22 +241,17 @@ mms-h {
 				for (const element of elementsKnown) {
 					delete element["markmysearchKnown"];
 				}
-				if (elementsKnown.size) {
-					//mutationUpdates.observe();
-					return;
-				}
-				for (const element of elements) {
-					for (const elementOther of elements) {
-						if (elementOther !== element && element.contains(elementOther)) {
-							elements.delete(elementOther);
+				if (elements.size > 0) {
+					for (const element of elements) {
+						for (const elementOther of elements) {
+							if (elementOther !== element && element.contains(elementOther)) {
+								elements.delete(elementOther);
+							}
 						}
 					}
+					highlightElementsThrottled();
 				}
-				highlightElementsLimited();
 				//mutationUpdates.observe();
-				for (const listener of this.#highlightingUpdatedListeners) {
-					listener();
-				}
 			});
 		})();
 		return mutationUpdates;
@@ -413,9 +414,6 @@ mms-h {
 		elementsPurgeClass(EleClass.FOCUS_CONTAINER, root);
 		elementsPurgeClass(EleClass.FOCUS, root);
 		elementsRemakeUnfocusable(root);
-		for (const listener of this.#highlightingUpdatedListeners) {
-			listener();
-		}
 	}
 
 	/**
