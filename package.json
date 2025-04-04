@@ -1,36 +1,28 @@
 {
-	"name": "mark-my-search",
 	"displayName": "Mark My Search",
-	"type": "module",
-	"scripts": {
-		"icons-convert": "bash -c 'mkdir -p icons/dist; SIZES=(16 32 48 64 96 128 240 300); for SIZE in ${SIZES[@]}; do inkscape icons/mms.svg -w $SIZE -h $SIZE -o icons/dist/mms-${SIZE}.png; done; SIZES=(32); for SIZE in ${SIZES[@]}; do inkscape icons/mms-off.svg -w $SIZE -h $SIZE -o icons/dist/mms-off-${SIZE}.png; done'",
-		"scripts-build": "rm --recursive dist; tsc --project tsconfig.json",
-		"prepare-firefox": "ln --force --symbolic platform/firefox/manifest.json manifest.json",
-		"prepare-chromium": "ln --force --symbolic platform/chromium/manifest.json manifest.json",
-		"pack-firefox": "rm --force pack/mark_my_search-firefox.zip; npm run scripts-build; npm run prepare-firefox; mkdir --parents pack; zip pack/mark_my_search-firefox.zip * -ri dist/**\\* icons/**\\* pages/**\\* lib/**\\* manifest.json",
-		"pack-chromium": "rm --force pack/mark_my_search-chromium.zip; npm run scripts-build; npm run prepare-chromium; mkdir --parents pack; zip pack/mark_my_search-chromium.zip * -ri dist/**\\* icons/**\\* pages/**\\* lib/**\\* manifest.json"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/searchmarkers/mark-my-search.git"
+	"name": "mark-my-search",
+	"license": "EUPL-1.2-or-later",
+	"homepage": "https://github.com/searchmarkers/mark-my-search#readme",
+	"bugs": {
+		"url": "https://github.com/searchmarkers/mark-my-search/issues"
 	},
 	"author": {
 		"name": "ator-dev",
 		"email": "ator-dev@protonmail.com",
 		"url": "https://github.com/ator-dev"
 	},
-	"license": "MIT",
-	"bugs": {
-		"url": "https://github.com/searchmarkers/mark-my-search/issues"
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/searchmarkers/mark-my-search.git"
 	},
-	"homepage": "https://github.com/searchmarkers/mark-my-search#readme",
+	"type": "module",
 	"devDependencies": {
-		"@types/chrome": "0.0.253",
-		"@types/firefox-webext-browser": "120.0.0",
-		"eslint": "9.12.0",
-		"globals": "^15.6.0",
-		"inkscape": "3.1.1",
-		"typescript": "5.6.3",
-		"typescript-eslint": "8.8.1"
+		"@types/chrome": "0.0.299",
+		"@types/firefox-webext-browser": "120.0.4",
+		"eslint": "9.18.0",
+		"globals": "15.14.0",
+		"sharp-cli": "5.1.0",
+		"typescript": "5.7.3",
+		"typescript-eslint": "8.21.0"
 	}
 }

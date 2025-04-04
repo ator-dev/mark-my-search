@@ -1,0 +1,554 @@
+/*
+ * This file is part of Mark My Search.
+ * Copyright © 2021-present ‘ator-dev’, Mark My Search contributors.
+ * Licensed under the EUPL-1.2-or-later.
+ */
+
+import type { PagePanelInfo, PageInteractionObjectRowInfo, PageInteractionCheckboxInfo } from "/dist/modules/page-build.mjs";
+import { loadPage, pageInsertWarning, sendProblemReport, PageAlertType } from "/dist/modules/page-build.mjs";
+import type { StorageLocalValues, StorageAreaName, StorageArea } from "/dist/modules/storage.mjs";
+import { StorageSession, StorageLocal, StorageSync, storageGet, storageSet } from "/dist/modules/storage.mjs";
+import { MatchTerm, type MatchMode } from "/dist/modules/match-term.mjs";
+import { isTabResearchPage } from "/dist/modules/tabs.mjs";
+import { sendBackgroundMessage } from "/dist/modules/messaging/background.mjs";
+
+/**
+ * Loads the popup content into the page.
+ * This presents the user with common options and actions (usually those needed while navigating), to be placed in a popup.
+ */
+const loadPopup = (() => {
+	/**
+	 * Creates info for a checkbox assigned to a particular match mode.
+	 * @param mode The key of the match mode.
+	 * @param labelText Text to display in the checkbox label.
+	 * @returns The resulting info object.
+	 */
+	const getMatchModeInteractionInfo = (mode: keyof MatchMode, labelText: string, invert?: boolean): PageInteractionObjectRowInfo => ({
+		className: "type",
+		key: `matchMode.${mode}`,
+		label: {
+			text: labelText,
+		},
+		checkbox: {
+			onLoad: async (setChecked, objectIndex, containerIndex) => {
+				const sync = await storageGet("sync", [ StorageSync.TERM_LISTS ]);
+				setChecked(sync.termLists[containerIndex].terms[objectIndex].matchMode[mode] === !invert);
+			},
+			onToggle: (checked, objectIndex, containerIndex) => {
+				storageGet("sync", [ StorageSync.TERM_LISTS ]).then(sync => {
+					const oldTerm = sync.termLists[containerIndex].terms[objectIndex];
+					const matchMode = Object.assign({}, oldTerm.matchMode) as MatchMode;
+					matchMode[mode] = checked === !invert;
+					sync.termLists[containerIndex].terms[objectIndex] = new MatchTerm(oldTerm.phrase, matchMode);
+					storageSet("sync", sync);
+				});
+			},
+		},
+	});
+
+	/**
+	 * Creates info for a checkbox handling a basic storage field.
+	 * @param storageArea The name of the storage area to use.
+	 * @param storageKey The key for the field within the storage area.
+	 * @returns The resulting info object.
+	 */
+	const getStorageFieldCheckboxInfo = (storageArea: StorageAreaName, storageKey: StorageArea<typeof storageArea>): PageInteractionCheckboxInfo => ({
+		onLoad: async setChecked => {
+			const store = await storageGet(storageArea, [ storageKey ]);
+			setChecked(store[storageKey]);
+		},
+		onToggle: checked => {
+			storageSet(storageArea, {
+				[storageKey]: checked
+			} as StorageLocalValues);
+		},
+	});
+
+	/**
+	 * Details of the page's panels and their various components.
+	 */
+	const panelsInfo: Array<PagePanelInfo> = [
+		{
+			className: "panel-general",
+			name: {
+				text: "Controls",
+			},
+			sections: [
+				{
+					interactions: [
+						{
+							className: "action",
+							submitters: [
+								{
+									text: "Get started",
+									onClick: (messageText, formFields, onSuccess) => {
+										chrome.tabs.create({ url: chrome.runtime.getURL("/pages/startpage.html") });
+										onSuccess();
+									},
+								},
+								{
+									text: "Options",
+									onClick: (messageText, formFields, onSuccess) => {
+										chrome.runtime.openOptionsPage();
+										onSuccess();
+									},
+								},
+							],
+						},
+					]
+				},
+				{
+					title: {
+						text: "Tabs",
+					},
+					interactions: [
+						{
+							className: "option",
+							label: {
+								text: "Detect search engines",//"Highlight web searches",
+							},
+							checkbox: {
+								onLoad: async setChecked => {
+									const local = await storageGet("local", [ StorageLocal.ENABLED ]);
+									setChecked(local.enabled);
+								},
+								onToggle: checked => {
+									storageSet("local", {
+										enabled: checked,
+									} as StorageLocalValues);
+								},
+							},
+						},
+						{
+							className: "option",
+							label: {
+								text: "Restore keywords on reactivation",
+							},
+							checkbox: getStorageFieldCheckboxInfo("local", StorageLocal.PERSIST_RESEARCH_RECORDS),
+						},
+					],
+				},
+				{
+					title: {
+						text: "This Tab",
+					},
+					interactions: [
+						{
+							className: "option",
+							label: {
+								text: "Active",
+							},
+							checkbox: {
+								onLoad: async setChecked => {
+									const [ tab ] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+									setChecked(tab.id === undefined ? false : await isTabResearchPage(tab.id));
+								},
+								onToggle: checked => {
+									if (checked) {
+										storageGet("session", [ StorageSession.RESEARCH_RECORDS ]).then(async session => {
+											const [ tab ] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+											if (tab.id === undefined) {
+												return;
+											}
+											const local = await storageGet("local", [ StorageLocal.PERSIST_RESEARCH_RECORDS ]);
+											const researchRecord = session.researchRecords[tab.id];
+											if (researchRecord && local.persistResearchInstances) {
+												researchRecord.active = true;
+											}
+											sendBackgroundMessage({
+												type: "commands",
+												commands: [ {
+													type: "sendTabCommands",
+													commands: [ {
+														type: "useTerms",
+														terms: (researchRecord && researchRecord.active) ? researchRecord.terms : [],
+														replaceExisting: true,
+													}, {
+														type: "activate",
+													} ]
+												}, {
+													type: "toggleInTab",
+													highlightsShownOn: true,
+												} ],
+											});
+										});
+									} else {
+										sendBackgroundMessage({
+											type: "commands",
+											commands: [ {
+												type: "deactivateTabResearch",
+											} ],
+										});
+									}
+								}
+							},
+						},
+						{
+							className: "action",
+							submitters: [ {
+								text: "Delete keywords",
+								id: "keyword-delete",
+								onLoad: async setEnabled => {
+									const [ tab ] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+									setEnabled(tab.id === undefined ? false :
+										!!(await storageGet("session", [ StorageSession.RESEARCH_RECORDS ])).researchRecords[tab.id]);
+								},
+								onClick: async () => {
+									const [ tab ] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+									if (tab.id === undefined) {
+										return;
+									}
+									const session = await storageGet("session", [ StorageSession.RESEARCH_RECORDS ]);
+									delete session.researchRecords[tab.id];
+									await storageSet("session", session);
+									sendBackgroundMessage({
+										type: "commands",
+										commands: [ {
+											type: "deactivateTabResearch",
+										} ],
+									});
+								},
+							} ],
+						},
+					],
+				},
+				{
+					title: {
+						text: "I Have A Problem",
+						expands: true,
+					},
+					interactions: [
+						{
+							className: "action",
+							submitters: [ {
+								text: "Send anonymous feedback",
+								onClick: (messageText, formFields, onSuccess, onError) => {
+									sendProblemReport(messageText, formFields)
+										.then(onSuccess)
+										.catch(onError);
+								},
+								message: {
+									rows: 2,
+									placeholder: "Message",
+									required: true,
+								},
+								alerts: {
+									[PageAlertType.SUCCESS]: {
+										text: "Success",
+									},
+									[PageAlertType.FAILURE]: {
+										text: "Status {status}: {text}",
+									},
+									[PageAlertType.PENDING]: {
+										text: "Pending, do not close popup",
+									},
+								},
+							} ],
+							note: {
+								text: "Submits: version, url, keywords, message",
+							},
+						},
+						{
+							className: "link",
+							anchor: {
+								url: "https://github.com/searchmarkers/mark-my-search/issues/new",
+								text: "File an issue (GitHub)",
+							},
+						},
+						{
+							className: "link",
+							anchor: {
+								url: "mailto:ator-dev@protonmail.com?subject=Mark%20My%20Search%20support",
+								text: "Contact the developer",
+							},
+						},
+					],
+				},
+			],
+		},
+		{
+			className: "panel-sites_search_research",
+			name: {
+				text: "Highlight",
+			},
+			sections: [
+				{
+					title: {
+						text: "Sites to Never Highlight",
+					},
+					interactions: [
+						{
+							className: "url",
+							textbox: {
+								className: "url-input",
+								list: {
+									getArray: () =>
+										storageGet("sync", [ StorageSync.URL_FILTERS ]).then(sync => //
+											sync.urlFilters.noPageModify.map(({ hostname, pathname }) => hostname + pathname) //
+										)
+									,
+									setArray: array =>
+										storageGet("sync", [ StorageSync.URL_FILTERS ]).then(sync => {
+											sync.urlFilters.noPageModify = array.map(value => {
+												const pathnameStart = value.includes("/") ? value.indexOf("/") : value.length;
+												return {
+													hostname: value.slice(0, pathnameStart),
+													pathname: value.slice(pathnameStart),
+												};
+											});
+											storageSet("sync", sync);
+										})
+									,
+								},
+								placeholder: "example.com/optional-path",
+								spellcheck: false,
+							},
+						},
+					],
+				},
+				{
+					title: {
+						text: "Sites to Not Detect As Search Engines",
+					},
+					interactions: [
+						{
+							className: "url",
+							textbox: {
+								className: "url-input",
+								list: {
+									getArray: () =>
+										storageGet("sync", [ StorageSync.URL_FILTERS ]).then(sync => //
+											sync.urlFilters.nonSearch.map(({ hostname, pathname }) => hostname + pathname) //
+										)
+									,
+									setArray: array =>
+										storageGet("sync", [ StorageSync.URL_FILTERS ]).then(sync => {
+											sync.urlFilters.nonSearch = array.map(value => {
+												const pathnameStart = value.includes("/") ? value.indexOf("/") : value.length;
+												return {
+													hostname: value.slice(0, pathnameStart),
+													pathname: value.slice(pathnameStart),
+												};
+											});
+											storageSet("sync", sync);
+										})
+									,
+								},
+								placeholder: "example.com/optional-path",
+								spellcheck: false,
+							},
+						},
+					],
+				},
+			],
+		},
+		{
+			className: "panel-term_lists",
+			name: {
+				text: "Keyword Lists",
+			},
+			sections: [
+				{
+					title: {
+						text: "Keyword Lists",
+					},
+					interactions: [
+						{
+							className: "temp-class",
+							list: {
+								getLength: () =>
+									storageGet("sync", [ StorageSync.TERM_LISTS ]).then(sync =>
+										sync.termLists.length
+									)
+								,
+								pushWithName: name =>
+									storageGet("sync", [ StorageSync.TERM_LISTS ]).then(sync => {
+										sync.termLists.push({
+											name,
+											terms: [],
+											urlFilter: [],
+										});
+										storageSet("sync", sync);
+									})
+								,
+								removeAt: index =>
+									storageGet("sync", [ StorageSync.TERM_LISTS ]).then(sync => {
+										sync.termLists.splice(index, 1);
+										storageSet("sync", sync);
+									})
+								,
+							},
+							label: {
+								text: "",
+								getText: index =>
+									storageGet("sync", [ StorageSync.TERM_LISTS ]).then(sync =>
+										sync.termLists[index] ? sync.termLists[index].name : ""
+									)
+								,
+								setText: (text, index) =>
+									storageGet("sync", [ StorageSync.TERM_LISTS ]).then(sync => {
+										sync.termLists[index].name = text;
+										storageSet("sync", sync);
+									})
+								,
+								textbox: {
+									placeholder: "List Name",
+								},
+							},
+							object: {
+								className: "term",
+								list: {
+									getArray: index =>
+										storageGet("sync", [ StorageSync.TERM_LISTS ]).then(sync =>
+											sync.termLists[index].terms as unknown as Array<Record<string, unknown>>
+										)
+									,
+									setArray: (array, index) =>
+										storageGet("sync", [ StorageSync.TERM_LISTS ]).then(sync => {
+											sync.termLists[index].terms = array as unknown as typeof sync["termLists"][number]["terms"];
+											storageSet("sync", sync);
+										})
+									,
+									getNew: text =>
+										new MatchTerm(text) as unknown as Record<string, unknown>
+									,
+								},
+								name: {
+									text: "",
+									textbox: {
+										placeholder: "keyword",
+									},
+								},
+								columns: [
+									{
+										className: "temp-class",
+										rows: [
+											{
+												className: "temp-class",
+												key: "phrase",
+												textbox: {
+													className: "phrase-input",
+													placeholder: "keyword",
+													spellcheck: false,
+													onLoad: async (setText, objectIndex, containerIndex) => {
+														const sync = await storageGet("sync", [ StorageSync.TERM_LISTS ]);
+														setText(sync.termLists[containerIndex].terms[objectIndex] ? sync.termLists[containerIndex].terms[objectIndex].phrase : "");
+													},
+													onChange: (text, objectIndex, containerIndex) => {
+														storageGet("sync", [ StorageSync.TERM_LISTS ]).then(sync => {
+															const oldTerm = sync.termLists[containerIndex].terms[objectIndex];
+															sync.termLists[containerIndex].terms[objectIndex] = new MatchTerm(oldTerm.phrase, oldTerm.matchMode);
+															storageSet("sync", sync);
+														});
+													},
+												},
+											},
+										],
+									},
+									{
+										className: "matching",
+										rows: [
+											getMatchModeInteractionInfo("case", "Case Sensitive"),
+											getMatchModeInteractionInfo("whole", "Whole Words"),
+											getMatchModeInteractionInfo("stem", "Stemming"),
+											getMatchModeInteractionInfo("diacritics", "Diacritics Sensitive", true),  // TODO: Un-invert.
+											getMatchModeInteractionInfo("regex", "Regular Expression"),
+										],
+									},
+								],
+							},
+							textbox: {
+								className: "temp-class",
+								list: {
+									getArray: index =>
+										storageGet("sync", [ StorageSync.TERM_LISTS ]).then(sync => //
+											sync.termLists[index].urlFilter.map(({ hostname, pathname }) => hostname + pathname) //
+										)
+									,
+									setArray: (array, index) =>
+										storageGet("sync", [ StorageSync.TERM_LISTS ]).then(sync => {
+											sync.termLists[index].urlFilter = array.map(value => {
+												const pathnameStart = value.includes("/") ? value.indexOf("/") : value.length;
+												return {
+													hostname: value.slice(0, pathnameStart),
+													pathname: value.slice(pathnameStart),
+												};
+											});
+											storageSet("sync", sync);
+										})
+									,
+								},
+								placeholder: "example.com/optional-path",
+								spellcheck: false,
+							},
+							submitters: [
+								{
+									text: "Highlight in current tab",
+									onClick: async (messageText, formFields, onSuccess, onError, index) => {
+										const [ tab ] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+										if (tab.id === undefined) {
+											return;
+										}
+										const sync = await storageGet("sync", [ StorageSync.TERM_LISTS ]);
+										const session = await storageGet("session", [ StorageSession.RESEARCH_RECORDS ]);
+										const researchRecord = session.researchRecords[tab.id];
+										if (researchRecord) {
+											researchRecord.active = true;
+											await storageSet("session", session);
+										}
+										sendBackgroundMessage({
+											type: "commands",
+											commands: [ {
+												type: "sendTabCommands",
+												commands: [ {
+													type: "useTerms",
+													terms: researchRecord
+														? researchRecord.terms.concat(
+															sync.termLists[index].terms.filter(termFromList =>
+																!researchRecord.terms.find(term => term.phrase === termFromList.phrase)
+															)
+														)
+														: sync.termLists[index].terms,
+													replaceExisting: true,
+												}, {
+													type: "activate",
+												} ],
+											}, {
+												type: "toggleInTab",
+												highlightsShownOn: true,
+											} ],
+										});
+										onSuccess();
+									},
+								},
+							],
+						},
+					],
+				},
+			],
+		},
+	];
+
+	return () => {
+		loadPage(panelsInfo, `
+body
+	{ width: 300px; height: 500px; user-select: none; }
+.container-panel > .panel, .brand
+	{ margin-inline: 0; }
+		`, false);
+		pageInsertWarning(
+			document.querySelector(".container-panel .panel-sites_search_research") ?? document.body,
+			"List entries are saved as you type them. This will be more clear in future.",
+		);
+		pageInsertWarning(
+			document.querySelector(".container-panel .panel-term_lists") ?? document.body,
+			"Keyword lists are highly experimental. Please report any issues.",
+		);
+	};
+})();
+
+(() => {
+	return () => {
+		loadPopup();
+	};
+})()();
