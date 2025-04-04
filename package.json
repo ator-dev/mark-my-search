@@ -1,29 +1,21 @@
 {
-	"name": "mark-my-search",
 	"displayName": "Mark My Search",
-	"type": "module",
-	"scripts": {
-		"icons-convert": "bash -c 'mkdir -p icons/dist; SIZES=(16 32 48 64 96 128 240 300); for SIZE in ${SIZES[@]}; do npx sharp -i icons/mms.svg -o icons/dist/mms-${SIZE}.png resize $SIZE $SIZE & done; SIZES=(32); for SIZE in ${SIZES[@]}; do npx sharp -i icons/mms-off.svg -o icons/dist/mms-off-${SIZE}.png resize $SIZE $SIZE & done; wait'",
-		"scripts-build": "rm --recursive dist; tsc --project tsconfig.json",
-		"prepare-firefox": "ln --force --symbolic platform/firefox/manifest.json manifest.json",
-		"prepare-chromium": "ln --force --symbolic platform/chromium/manifest.json manifest.json",
-		"pack-firefox": "rm --force pack/mark_my_search-firefox.zip; npm run scripts-build; npm run prepare-firefox; mkdir --parents pack; zip pack/mark_my_search-firefox.zip * -ri dist/**\\* icons/**\\* pages/**\\* lib/**\\* manifest.json",
-		"pack-chromium": "rm --force pack/mark_my_search-chromium.zip; npm run scripts-build; npm run prepare-chromium; mkdir --parents pack; zip pack/mark_my_search-chromium.zip * -ri dist/**\\* icons/**\\* pages/**\\* lib/**\\* manifest.json"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/searchmarkers/mark-my-search.git"
+	"name": "mark-my-search",
+	"license": "EUPL-1.2-or-later",
+	"homepage": "https://github.com/searchmarkers/mark-my-search#readme",
+	"bugs": {
+		"url": "https://github.com/searchmarkers/mark-my-search/issues"
 	},
 	"author": {
 		"name": "ator-dev",
 		"email": "ator-dev@protonmail.com",
 		"url": "https://github.com/ator-dev"
 	},
-	"license": "MIT",
-	"bugs": {
-		"url": "https://github.com/searchmarkers/mark-my-search/issues"
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/searchmarkers/mark-my-search.git"
 	},
-	"homepage": "https://github.com/searchmarkers/mark-my-search#readme",
+	"type": "module",
 	"devDependencies": {
 		"@types/chrome": "0.0.299",
 		"@types/firefox-webext-browser": "120.0.4",
