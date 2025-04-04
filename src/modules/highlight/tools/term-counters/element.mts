@@ -25,14 +25,15 @@ class TermCounter {
 	 * @returns The occurrence count for the term.
 	 */
 	countFaster (term: MatchTerm): number {
-		const occurrences = Array.from(document.body.getElementsByClassName(getTermClass(term, this.#termTokens)));
+		const occurrences = document.body.getElementsByClassName(getTermClass(term, this.#termTokens));
 		//const matches = occurrences.map(occurrence => occurrence.textContent).join("").match(term.pattern);
 		//return matches ? matches.length : 0; // Works poorly in situations such as matching whole words.
 		return occurrences.length; // Poor and changeable heuristic, but so far the most reliable efficient method.
 	}
 
 	exists (term: MatchTerm): boolean {
-		return this.countFaster(term) > 1;
+		const occurrences = document.body.getElementsByClassName(getTermClass(term, this.#termTokens));
+		return occurrences.length > 0;
 	}
 }
 
