@@ -4,13 +4,13 @@
  * Licensed under the EUPL-1.2-or-later.
  */
 
+:root {
+	--list-indent: 0;
+}
+
 :is(body, body.fill-viewport) {
 	width: 300px;
 	height: 500px;
-	box-sizing: border-box;
-	min-height: unset;
-	border: 2px solid hsl(300 100% 14%);
-	border-radius: 8px;
 }
 
 #header .controls {
@@ -22,11 +22,6 @@
 		background: hsl(300 100% 6%);
 	}
 
-	&, & .tab-list {
-		border-bottom-left-radius: inherit;
-		border-bottom-right-radius: inherit;
-	}
-
 	& .tab-list {
 		& {
 			margin: 0;
@@ -34,9 +29,8 @@
 			list-style: none;
 			display: flex;
 			justify-content: center;
-			border-top: 2px solid hsl(300 30% 32%);
-			border-bottom-left-radius: inherit;
-			border-bottom-right-radius: inherit;
+			border-bottom-left-radius: 8px;
+			border-bottom-right-radius: 8px;
 		}
 
 		& > a {
@@ -49,16 +43,17 @@
 			text-align: center;
 			background: transparent;
 			text-decoration: none;
-			color: hsl(300 20% 90%);
+			color: white;
 		}
 
 		& > a:hover {
-			background: hsl(300 30% 22%);
+			background: hsl(300 30% 30%);
 		}
 
 		& > a.active {
 			border-bottom: 2px solid hsl(300 100% 50%);
-			background: hsl(300 30% 32%);
+			background: var(--bg);
+			color: var(--color);
 		}
 	}
 }
