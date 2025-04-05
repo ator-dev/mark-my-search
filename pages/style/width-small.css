@@ -1,5 +1,6 @@
 :root {
-	--list-indent: 10px;
+	--content-padding-inline: 14px;
+	--list-indent: 0;
 }
 
 #header {
@@ -25,10 +26,6 @@
 		margin-block-end: 0.2em;
 		font-size: 1.5em;
 	}
-}
-
-#main {
-	padding-inline: 12px;
 }
 
 .setting-list {

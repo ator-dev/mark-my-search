@@ -6,6 +6,7 @@
 
  :root {
 	--content-width: 1200px;
+	--content-padding-inline: 20px;
 	--list-gap: 0.5em;
 	--list-indent: 30px;
 	--list-margin-block: 1em;
@@ -320,7 +321,7 @@ body {
 
 #main {
 	max-width: var(--content-width);
-	padding-inline: 20px;
+	padding-inline: var(--content-padding-inline);
 	margin-inline: auto;
 }
 
@@ -339,6 +340,8 @@ body.fill-viewport {
 
 	& > :is(#main, #main-container) {
 		flex: 1;
+		width: 100%;
+		box-sizing: border-box;
 	}
 }
 
