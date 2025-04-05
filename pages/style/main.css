@@ -4,7 +4,7 @@
  * Licensed under the EUPL-1.2-or-later.
  */
 
-:root {
+ :root {
 	--list-gap: 0.5em;
 	--list-indent: 30px;
 	--list-margin-block: 1em;
@@ -123,9 +123,6 @@
 }
 
 body {
-	display: flex;
-	flex-direction: column;
-	min-height: 100vh;
 	margin: 0;
 }
 
@@ -254,8 +251,8 @@ body {
 }
 
 #main-container {
-	flex: 1;
 	display: flex;
+	justify-content: center;
 }
 
 #main-container > .sidebar {
@@ -322,9 +319,15 @@ body {
 }
 
 #main {
-	width: 1200px;
-	overflow-x: auto /* Required to prevent scrollable flex (row) containers from taking up the full width */;
+	max-width: 1200px;
 	padding-inline: 20px;
+	margin-inline: auto;
+}
+
+#main-container > #main {
+	flex: 0 1 auto;
+	margin-inline: unset;
+	overflow-x: auto;
 }
 
 h1 {
@@ -536,6 +539,19 @@ ol, ul {
 	& > li + li::before {
 		content: "·";
 	}
+}
+
+dd {
+	margin-inline-start: 0;
+	margin-block-start: 0.6em;
+}
+
+dd dfn {
+	font-weight: bold;
+}
+
+dt {
+	margin-inline-start: 8px;
 }
 
 button {
