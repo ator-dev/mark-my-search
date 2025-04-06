@@ -9,6 +9,14 @@
 	--list-indent: 0;
 }
 
+:root {
+	--bg-popup-tab: black;
+	--bg-popup-tab-hover: hsl(300 30% 30%);
+	--color-popup-tab: hsl(300 30% 80%);
+	--color-popup-tab-hover: hsl(300 30% 80%);
+	--border-popup-tab-highlight: hsl(300 100% 50%);
+}
+
 :is(body, body.fill-viewport) {
 	width: 300px;
 	height: 500px;
@@ -49,7 +57,7 @@
 
 #footer {
 	& {
-		background: hsl(300 100% 6%);
+		background: var(--bg-popup-tab);
 	}
 
 	& .tab-list {
@@ -72,15 +80,15 @@
 			text-align: center;
 			background: transparent;
 			text-decoration: none;
-			color: white;
+			color: var(--color-popup-tab);
 		}
 
 		& > a:hover {
-			background: hsl(300 30% 30%);
+			background: var(--bg-popup-tab-hover);
 		}
 
 		& > a.active {
-			border-bottom: 2px solid hsl(300 100% 50%);
+			border-bottom: 2px solid var(--border-popup-tab-highlight);
 			background: var(--bg);
 			color: var(--color);
 		}

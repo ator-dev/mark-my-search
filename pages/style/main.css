@@ -4,7 +4,7 @@
  * Licensed under the EUPL-1.2-or-later.
  */
 
- :root {
+:root {
 	--content-width: 1200px;
 	--content-padding-inline: 20px;
 	--list-gap: 0.5em;
@@ -14,7 +14,7 @@
 }
 
 :root {
-	--bg-D: #1c1b22 /* Background color of Firefox's add-on manager. */;
+	--bg-D: hsl(230 10% 16%);
 	--bg-L: hsl(0 0% 100%);
 	--color-D: hsl(0 0% 78%);
 	--color-L: hsl(0 0% 0%);
@@ -50,6 +50,8 @@
 	--color-keyboard: var(--color-dim);
 	--border-keyboard: var(--color-dim);
 	--bg-nav-button: var(--bg);
+	--bg-nav-button-current-D: hsl(300 40% 26%);
+	--bg-nav-button-current-L: var(--border-nav-button);
 	--border-nav-button: var(--border-header);
 	--bg-selected: hsl(300 50% 70%);
 	--color-selected: hsl(0 0% 0%);
@@ -73,6 +75,7 @@
 	--outline-info-details: var(--outline-info-details-L);
 	--color-info-details: var(--color-info-details-L);
 	--border-bubble: var(--border-bubble-L);
+	--bg-nav-button-current: var(--bg-nav-button-current-L);
 }
 
 :root:has(#theme-dark:checked) {
@@ -93,6 +96,7 @@
 	--outline-info-details: var(--outline-info-details-D);
 	--color-info-details: var(--color-info-details-D);
 	--border-bubble: var(--border-bubble-D);
+	--bg-nav-button-current: var(--bg-nav-button-current-D);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -114,6 +118,7 @@
 		--outline-info-details: var(--outline-info-details-D);
 		--color-info-details: var(--color-info-details-D);
 		--border-bubble: var(--border-bubble-D);
+		--bg-nav-button-current: var(--bg-nav-button-current-D);
 	}
 }
 
@@ -164,6 +169,10 @@ body {
 		background: var(--bg-nav-button);
 		border: 2px solid var(--border-nav-button);
 		border-radius: calc(infinity * 1px);
+	}
+
+	& nav a[href=""] {
+		background: var(--bg-nav-button-current);
 	}
 
 	& nav a[href^="#"] {
