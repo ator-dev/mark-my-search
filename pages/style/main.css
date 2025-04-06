@@ -25,7 +25,7 @@
 	--color-accent-D: hsl(300 30% 70%);
 	--color-accent-L: hsl(300 70% 30%);
 	--color-logo-title-D: hsl(0 0% 82%);
-	--color-logo-title-L: hsl(0 0% 20%);
+	--color-logo-title-L: hsl(300 20% 44%);
 	--color-h1-D: hsl(0 0% 82%);
 	--color-h1-L: hsl(0 0% 20%);
 	--color-h2-D: hsl(0 0% 82%);
@@ -256,7 +256,7 @@ body {
 		font-size: 2em;
 		font-weight: normal;
 		text-decoration: none;
-		color: var(--color);
+		color: var(--color-logo-title);
 	}
 
 	& .brand .version {
