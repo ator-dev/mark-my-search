@@ -230,19 +230,29 @@ body {
 		outline-offset: 1px;
 	}
 
-	& .logo-icon {
+	& .brand .logo-icon {
 		width: 38px;
 		margin-right: 10px;
 		padding-bottom: 10px;
 	}
 
-	& .logo-title {
+	& .brand .logo-title {
 		margin-block: 0.4em;
 		white-space: nowrap;
 		font-size: 2em;
 		font-weight: normal;
 		text-decoration: none;
 		color: var(--color);
+	}
+
+	& .brand .version {
+		color: hsl(from var(--color-dim) 300 calc(60% - (l * 0.5%)) l);
+		font-size: 14px;
+		margin-block-start: 0.3em;
+	}
+
+	& .brand > .space {
+		flex: 1;
 	}
 }
 

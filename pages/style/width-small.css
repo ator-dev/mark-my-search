@@ -17,14 +17,14 @@
 		padding: 8px;
 	}
 
-	& .logo-icon {
+	& .brand .logo-icon {
 		padding-bottom: 0;
 	}
 
-	& .logo-title {
-		margin-block-start: 0.5em;
-		margin-block-end: 0.2em;
-		font-size: 1.5em;
+	& .brand .logo-title {
+		margin-block-start: 0.4em;
+		margin-block-end: 0.4em;
+		font-size: 1.4em;
 	}
 }
 
