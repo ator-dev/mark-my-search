@@ -36,6 +36,8 @@
 	--bg-header-L: hsl(300 100% 98%);
 	--border-header-D: hsl(300 40% 40%);
 	--border-header-L: hsl(300 100% 88%);
+	--shadow-header-D: hsl(300 30% 40%);
+	--shadow-header-L: hsl(300 100% 70%);
 	--color-info-D: hsl(0 0% 50%);
 	--color-info-L: hsl(0 0% 50%);
 	--color-info-hover-D: hsl(300 100% 34%);
@@ -70,6 +72,7 @@
 	--color-h3: var(--color-h3-L);
 	--bg-header: var(--bg-header-L);
 	--border-header: var(--border-header-L);
+	--shadow-header: var(--shadow-header-L);
 	--color-info: var(--color-info-L);
 	--color-info-hover: var(--color-info-hover-L);
 	--outline-info-details: var(--outline-info-details-L);
@@ -91,6 +94,7 @@
 	--color-h3: var(--color-h3-D);
 	--bg-header: var(--bg-header-D);
 	--border-header: var(--border-header-D);
+	--shadow-header: var(--shadow-header-D);
 	--color-info: var(--color-info-D);
 	--color-info-hover: var(--color-info-hover-D);
 	--outline-info-details: var(--outline-info-details-D);
@@ -113,6 +117,7 @@
 		--color-h3: var(--color-h3-D);
 		--bg-header: var(--bg-header-D);
 		--border-header: var(--border-header-D);
+		--shadow-header: var(--shadow-header-D);
 		--color-info: var(--color-info-D);
 		--color-info-hover: var(--color-info-hover-D);
 		--outline-info-details: var(--outline-info-details-D);
@@ -138,7 +143,7 @@ body {
 		display: flex;
 		overflow-y: visible /* Ensure that dropdowns can drop below the header. */;
 		background: var(--bg-header);
-		border-bottom: 1px solid var(--border-header);
+		box-shadow: 0 0 2px var(--shadow-header);
 		position: sticky;
 		top: 0;
 		z-index: 1;
