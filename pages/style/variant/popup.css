@@ -17,7 +17,7 @@
 	--border-popup-tab-highlight: hsl(300 100% 50%);
 }
 
-:is(body, body.fill-viewport) {
+body {
 	width: 300px;
 	height: 500px;
 }
