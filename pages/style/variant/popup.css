@@ -107,3 +107,9 @@ h2 {
 	padding-inline-start: 10px;
 	column-gap: 10px;
 }
+
+.setting-keyword-list-list.setting-list, .setting-keyword-list-list > .setting-list {
+	& > .setting-element > details {
+		display: block;
+	}
+}
