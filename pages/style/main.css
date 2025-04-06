@@ -649,6 +649,29 @@ p.setting {
 }
 
 .setting-keyword-list-list.setting-list, .setting-keyword-list-list > .setting-list {
+	& > .setting-element > details {
+		& {
+			display: inline;
+			padding: 6px;
+			border: 1px solid black;
+		}
+
+		& > h4 {
+			margin-block: 0.7em;
+			text-decoration: underline;
+		}
+
+		& > .setting {
+			margin-block: 0.4em;
+		}
+
+		& > .setting-list-container {
+			margin-block: 0;
+		}
+	}
+}
+
+/*.setting-keyword-list-list.setting-list, .setting-keyword-list-list > .setting-list {
 	&, & > .setting-element {
 		border-block: 1px solid var(--color-dim-dim);
 	}
@@ -659,9 +682,9 @@ p.setting {
 
 	& > .setting-element {
 		border-top: none;
-		contain: layout /* Prevent margin collapsing */;
+		contain: layout /* Prevent margin collapsing *//*;
 	}
-}
+}*/
 
 .setting-element-prototype {
 	display: none;

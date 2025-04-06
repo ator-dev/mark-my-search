@@ -76,14 +76,20 @@ const replaceTemplateVariablesRecursive = (root: HTMLElement, variable: string, 
 	replaceTemplateVariables(root, variable, value);
 	for (const element of root.querySelectorAll<HTMLElement>("*")) {
 		replaceTemplateVariables(element, variable, value);
+		for (const node of element.childNodes) {
+			replaceTemplateVariables(node, variable, value);
+		}
 	}
 };
 
-const replaceTemplateVariables = (element: HTMLElement, variable: string, value: string) => {
+const replaceTemplateVariables = (node: Node, variable: string, value: string) => {
 	const variablePattern = new RegExp(`\\{${variable}\\}`, "g");
-	for (const attr of element.getAttributeNames()) {
-		const attrValue = element.getAttribute(attr)!;
-		element.setAttribute(attr, attrValue.replaceAll(variablePattern, value));
+	if (node instanceof Text && node.textContent !== null) {
+		node.textContent = node.textContent.replaceAll(variablePattern, value);
+	} else if (node instanceof HTMLElement) {
+		for (const attr of node.getAttributeNames()) {
+			node.setAttribute(attr, node.getAttribute(attr)!.replaceAll(variablePattern, value));
+		}
 	}
 };
 

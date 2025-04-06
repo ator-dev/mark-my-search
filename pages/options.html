@@ -358,42 +358,47 @@ Licensed under the EUPL-1.2-or-later.
 					<div class="setting-list-container setting-keyword-list-list">
 						<ul class="setting-list">
 							<li class="setting-element-prototype setting-element" data-template="l">
-								<div class="setting">
-									<input id="setting--keyword-list-{l}--name" type="text" value="Keyword List {l}">
-									<label for="setting--keyword-list-{l}--name">
-										Name
-									</label>
-								</div>
-								<div class="setting-list-container">
-									<ul class="setting-list">
-										<li class="setting-element-prototype setting-element setting" data-template="k">
-											<input id="setting--keyword-list-{l}--keyword-{k}" type="text">
-											<label for="setting--keyword-list-{l}--keyword-{k}">
-												Keyword
-											</label>
-										</li>
-									</ul>
-									<div class="setting-element-adder">
-										<button>
-											Add Keyword
-										</button>
+								<details open="">
+									<summary>
+										List {l}
+									</summary>
+									<div class="setting">
+										<input id="setting--keyword-list-{l}--name" type="text" value="List {l}">
+										<label for="setting--keyword-list-{l}--name">
+											Name
+										</label>
 									</div>
-								</div>
-								<div class="setting-list-container">
-									<ul class="setting-list">
-										<li class="setting-element-prototype setting-element setting" data-template="p">
-											<input id="setting--keyword-list-{l}--pattern-{p}" type="text">
-											<label for="setting--keyword-list-{l}--pattern-{p}">
-												Website
-											</label>
-										</li>
-									</ul>
-									<div class="setting-element-adder">
-										<button>
-											Add Website
-										</button>
+									<h4>
+										Keywords
+									</h4>
+									<div class="setting-list-container">
+										<ul class="setting-list">
+											<li class="setting-element-prototype setting-element setting" data-template="k">
+												<input type="text">
+											</li>
+										</ul>
+										<div class="setting-element-adder">
+											<button>
+												Add Keyword
+											</button>
+										</div>
 									</div>
-								</div>
+									<h4>
+										Websites
+									</h4>
+									<div class="setting-list-container">
+										<ul class="setting-list">
+											<li class="setting-element-prototype setting-element setting" data-template="p">
+												<input type="text">
+											</li>
+										</ul>
+										<div class="setting-element-adder">
+											<button>
+												Add Website
+											</button>
+										</div>
+									</div>
+								</details>
 							</li>
 						</ul>
 						<div class="setting-element-adder">
