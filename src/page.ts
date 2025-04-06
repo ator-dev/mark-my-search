@@ -53,18 +53,39 @@ addEventListener("input", event => {
 
 addEventListener("click", event => {
 	const button = event.target;
-	if (!(button instanceof HTMLButtonElement)) {
-		return;
-	}
+	if (!(button instanceof HTMLButtonElement)) return;
 	if (button.closest(".setting-element-adder")) {
-		const elementAdder = button.closest<HTMLElement>(".setting-element-adder")!;
-		const list = elementAdder.previousElementSibling as HTMLElement;
-		const prototype = list.querySelector(".setting-element-prototype") as HTMLElement;
-		const element = prototype.cloneNode(true) as HTMLElement;
-		element.classList.remove("setting-element-prototype");
-		list.append(element);
+		settingElementAdderClicked(button);
 	}
 }, { passive: true });
+
+const settingElementAdderClicked = (button: HTMLButtonElement) => {
+	const elementAdder = button.closest<HTMLElement>(".setting-element-adder")!;
+	const list = elementAdder.previousElementSibling as HTMLElement;
+	const prototype = list.querySelector(".setting-element-prototype") as HTMLElement;
+	const element = prototype.cloneNode(true) as HTMLElement;
+	element.classList.remove("setting-element-prototype");
+	delete element.dataset.template;
+	const elementNum = Number.parseInt(list.dataset.counter ?? "0");
+	list.dataset.counter = String(elementNum + 1);
+	replaceTemplateVariablesRecursive(element, prototype.dataset.template ?? "", String(elementNum));
+	list.append(element);
+};
+
+const replaceTemplateVariablesRecursive = (root: HTMLElement, variable: string, value: string) => {
+	replaceTemplateVariables(root, variable, value);
+	for (const element of root.querySelectorAll<HTMLElement>("*")) {
+		replaceTemplateVariables(element, variable, value);
+	}
+};
+
+const replaceTemplateVariables = (element: HTMLElement, variable: string, value: string) => {
+	const variablePattern = new RegExp(`\\{${variable}\\}`, "g");
+	for (const attr of element.getAttributeNames()) {
+		const attrValue = element.getAttribute(attr)!;
+		element.setAttribute(attr, attrValue.replaceAll(variablePattern, value));
+	}
+};
 
 for (const input of document.querySelectorAll(".setting-color-range-container input")) {
 	input.dispatchEvent(new InputEvent("input", { bubbles: true }));

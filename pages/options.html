@@ -357,22 +357,20 @@ Licensed under the EUPL-1.2-or-later.
 					</h3>
 					<div class="setting-list-container setting-keyword-list-list">
 						<ul class="setting-list">
-							<li class="setting-element-prototype setting-element">
-								<div class="setting-list">
-									<input type="text">
-									<label>
+							<li class="setting-element-prototype setting-element" data-template="l">
+								<div class="setting">
+									<input id="setting--keyword-list-{l}--name" type="text" value="Keyword List {l}">
+									<label for="setting--keyword-list-{l}--name">
 										Name
 									</label>
 								</div>
 								<div class="setting-list-container">
 									<ul class="setting-list">
-										<li class="setting-element-prototype setting-element">
-											<div class="setting-list">
-												<input type="text">
-												<label>
-													Keyword
-												</label>
-											</div>
+										<li class="setting-element-prototype setting-element setting" data-template="k">
+											<input id="setting--keyword-list-{l}--keyword-{k}" type="text">
+											<label for="setting--keyword-list-{l}--keyword-{k}">
+												Keyword
+											</label>
 										</li>
 									</ul>
 									<div class="setting-element-adder">
@@ -383,13 +381,11 @@ Licensed under the EUPL-1.2-or-later.
 								</div>
 								<div class="setting-list-container">
 									<ul class="setting-list">
-										<li class="setting-element-prototype setting-element">
-											<div class="setting-list">
-												<input type="text">
-												<label>
-													Website
-												</label>
-											</div>
+										<li class="setting-element-prototype setting-element setting" data-template="p">
+											<input id="setting--keyword-list-{l}--pattern-{p}" type="text">
+											<label for="setting--keyword-list-{l}--pattern-{p}">
+												Website
+											</label>
 										</li>
 									</ul>
 									<div class="setting-element-adder">
