@@ -559,9 +559,10 @@ ol, ul {
 
 	& > li {
 		display: inline;
+		white-space: nowrap;
 	}
 
-	& > li + li::before {
+	& > li:not(:last-child)::after {
 		content: "·";
 	}
 }
