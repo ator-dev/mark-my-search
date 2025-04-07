@@ -56,6 +56,11 @@
 	--border-header-L: hsl(300 100% 88%);
 	--shadow-header-D: hsl(300 30% 40%);
 	--shadow-header-L: hsl(300 100% 70%);
+	--bg-bottom-tab: black;
+	--bg-bottom-tab-hover: hsl(300 30% 30%);
+	--color-bottom-tab: hsl(300 30% 80%);
+	--color-bottom-tab-hover: hsl(300 30% 80%);
+	--border-bottom-tab-highlight: hsl(300 100% 50%);
 	--color-info-D: hsl(0 0% 50%);
 	--color-info-L: hsl(0 0% 50%);
 	--color-info-hover-D: hsl(300 100% 34%);
@@ -75,14 +80,6 @@
 	--border-nav-button: var(--border-header);
 	--bg-selected: hsl(300 50% 70%);
 	--color-selected: hsl(0 0% 0%);
-}
-
-:root.popup {
-	--bg-popup-tab: black;
-	--bg-popup-tab-hover: hsl(300 30% 30%);
-	--color-popup-tab: hsl(300 30% 80%);
-	--color-popup-tab-hover: hsl(300 30% 80%);
-	--border-popup-tab-highlight: hsl(300 100% 50%);
 }
 
 :root, :root:has(#theme-light:checked) {
@@ -367,16 +364,13 @@ html.popup #header {
 	z-index: 1;
 }
 
-html.popup #footer {
-	background: var(--bg-popup-tab);
-}
-
-html.popup #footer .tab-list {
+#footer .tab-list {
 	margin: 0;
 	padding: 0;
 	list-style: none;
 	display: flex;
 	justify-content: center;
+	background: var(--bg-bottom-tab);
 
 	& > a {
 		flex: 1 1 auto;
@@ -389,15 +383,15 @@ html.popup #footer .tab-list {
 		text-align: center;
 		background: transparent;
 		text-decoration: none;
-		color: var(--color-popup-tab);
+		color: var(--color-bottom-tab);
 	}
 
 	& > a:hover {
-		background: var(--bg-popup-tab-hover);
+		background: var(--bg-bottom-tab-hover);
 	}
 
 	& > a.active {
-		border-bottom: 2px solid var(--border-popup-tab-highlight);
+		border-bottom: 2px solid var(--border-bottom-tab-highlight);
 		background: var(--bg);
 		color: var(--color);
 	}
