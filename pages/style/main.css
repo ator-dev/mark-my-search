@@ -172,6 +172,9 @@ html.popup body {
 body.fill-viewport {
 	display: flex;
 	flex-direction: column;
+}
+
+html:not(.popup) body.fill-viewport {
 	min-height: 100vh;
 }
 
@@ -368,7 +371,7 @@ html.popup #footer {
 	background: var(--bg-popup-tab);
 }
 
-html.popup .tab-list {
+html.popup #footer .tab-list {
 	margin: 0;
 	padding: 0;
 	list-style: none;
@@ -407,6 +410,10 @@ html.popup .tab-list {
 
 #main-container > .sidebar {
 	flex: 1;
+
+	html.popup & {
+		display: none;
+	}
 
 	&:first-child .sidebar-content {
 		padding-left: 20px;
@@ -467,7 +474,7 @@ html.popup .tab-list {
 	margin-inline: auto;
 }
 
-html.popup #main {
+html.popup :is(#main, #main-container) {
 	overflow-y: auto;
 }
 
@@ -674,11 +681,6 @@ p.hotkey kbd {
 	}
 }
 
-html.popup .setting-list {
-	padding-inline-start: 10px;
-	column-gap: 10px;
-}
-
 ol, ul {
 	margin-block: var(--list-margin-block);
 	padding-inline-start: var(--list-indent);
@@ -686,6 +688,10 @@ ol, ul {
 
 	& > li {
 		margin-block: var(--list-gap);
+	}
+
+	html.popup &:where(:not(.inline-list)) {
+		padding-inline-start: 14px;
 	}
 }
 
