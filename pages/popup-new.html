@@ -4,7 +4,7 @@ Copyright © 2021-present ‘ator-dev’, Mark My Search contributors.
 Licensed under the EUPL-1.2-or-later.
 -->
 <!DOCTYPE html>
-<html lang="en-GB" class="popup">
+<html lang="en-GB">
 <head>
 	<meta http-equiv="content-security-policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'">
 	<meta charset="utf-8">
@@ -12,6 +12,8 @@ Licensed under the EUPL-1.2-or-later.
 	<title>Mark My Search</title>
 	<link rel="icon" href="/icons/mms.svg" sizes="any">
 	<link rel="stylesheet" href="style/main.css">
+	<script src="/dist/page-priority.js"></script>
+	<script src="/dist/page.js" defer=""></script>
 </head>
 <body class="fill-viewport">
 	<header id="header">
@@ -56,13 +58,13 @@ Licensed under the EUPL-1.2-or-later.
 				</div>
 				<ul>
 					<li>
-						<a href="/pages/options.html#section--toolbar">Customise toolbar</a>
+						<a href="/pages/options.html?popup#section--toolbar">Customise toolbar</a>
 					</li>
 					<li>
-						<a href="/pages/options.html#section--highlighting">Customise highlighting</a>
+						<a href="/pages/options.html?popup#section--highlighting">Customise highlighting</a>
 					</li>
 					<li>
-						<a href="/pages/options.html#section--search-highlighting?">Customise search-highlighting</a>
+						<a href="/pages/options.html?popup#section--search-highlighting">Customise search-highlighting</a>
 					</li>
 				</ul>
 			</section>
@@ -200,6 +202,5 @@ Licensed under the EUPL-1.2-or-later.
 			<a href="#section--keyword-lists">Automation</a>
 		</ul>
 	</nav>
-	<script src="/dist/page.js"></script>
 </body>
 </html>

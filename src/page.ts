@@ -4,10 +4,6 @@
  * Licensed under the EUPL-1.2-or-later.
  */
 
-if (new URL(location.href).searchParams.get("frame") !== null) {
-	document.body.classList.add("frame");
-}
-
 const loadTheme = (theme: string) => {
 	const checkbox = document.getElementById("theme-" + theme) as HTMLInputElement | null;
 	if (checkbox) {
