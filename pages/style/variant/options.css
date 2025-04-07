@@ -4,10 +4,6 @@
  * Licensed under the EUPL-1.2-or-later.
  */
 
-.section:not(:has(:target)) {
-	display: none;
-}
-
 hgroup p {
 	display: none;
 }
