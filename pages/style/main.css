@@ -176,15 +176,13 @@ body.fill-viewport {
 }
 
 #header {
-	& {
-		display: flex;
-		overflow-y: visible /* Ensure that dropdowns can drop below the header. */;
-		background: var(--bg-header);
-		box-shadow: 0 0 2px var(--shadow-header);
-		position: sticky;
-		top: 0;
-		z-index: 1;
-	}
+	display: flex;
+	overflow-y: visible /* Ensure that dropdowns can drop below the header. */;
+	background: var(--bg-header);
+	box-shadow: 0 0 2px var(--shadow-header);
+	position: sticky;
+	top: 0;
+	z-index: 1;
 
 	& > * {
 		margin-inline: 10px;
@@ -308,9 +306,7 @@ body.fill-viewport {
 }
 
 html.popup #header {
-	& {
-		flex-direction: column;
-	}
+	flex-direction: column;
 
 	& .controls {
 		display: none;
@@ -339,9 +335,7 @@ html.popup #header {
 /* Alternate stacked header layout for narrow screens */
 @media (max-width: 700px) {
 	#header {
-		& {
-			flex-direction: column;
-		}
+		flex-direction: column;
 
 		& nav {
 			padding-block: 4px;
@@ -375,13 +369,11 @@ html.popup #footer {
 }
 
 html.popup .tab-list {
-	& {
-		margin: 0;
-		padding: 0;
-		list-style: none;
-		display: flex;
-		justify-content: center;
-	}
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	display: flex;
+	justify-content: center;
 
 	& > a {
 		flex: 1 1 auto;
@@ -414,9 +406,7 @@ html.popup .tab-list {
 }
 
 #main-container > .sidebar {
-	& {
-		flex: 1;
-	}
+	flex: 1;
 
 	&:first-child .sidebar-content {
 		padding-left: 20px;
@@ -428,14 +418,12 @@ html.popup .tab-list {
 }
 
 .sidebar-filled {
-	& {
-		display: flex;
-		flex-direction: column;
-		align-items: flex-end;
-		border-right: 1px solid var(--border-header);
-		background: var(--bg-header);
-		color: var(--color-accent);
-	}
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	border-right: 1px solid var(--border-header);
+	background: var(--bg-header);
+	color: var(--color-accent);
 
 	& * {
 		color: var(--color-accent);
@@ -446,9 +434,7 @@ html.popup .tab-list {
 	}
 
 	& .tab-list {
-		& {
-			padding: 0;
-		}
+		padding: 0;
 
 		& li {
 			display: block;
@@ -526,20 +512,18 @@ h4 {
 }
 
 input.info {
-	& {
-		display: inline-block;
-		position: relative;
-		margin-inline: 0.3em;
-		width: 1.2em;
-		height: 1.2em;
-		border: none;
-		border-radius: 1em;
-		text-align: center;
-		font-weight: bold;
-		background: none;
-		color: var(--color-info);
-		appearance: none /* Remove checkbox appearance for custom styling - may only work in newest browsers */;
-	}
+	display: inline-block;
+	position: relative;
+	margin-inline: 0.3em;
+	width: 1.2em;
+	height: 1.2em;
+	border: none;
+	border-radius: 1em;
+	text-align: center;
+	font-weight: bold;
+	background: none;
+	color: var(--color-info);
+	appearance: none /* Remove checkbox appearance for custom styling - may only work in newest browsers */;
 
 	&:not(:focus-visible) {
 		outline: 1px solid;
@@ -696,11 +680,9 @@ html.popup .setting-list {
 }
 
 ol, ul {
-	& {
-		margin-block: var(--list-margin-block);
-		padding-inline-start: var(--list-indent);
-		list-style-type: circle;
-	}
+	margin-block: var(--list-margin-block);
+	padding-inline-start: var(--list-indent);
+	list-style-type: circle;
 
 	& > li {
 		margin-block: var(--list-gap);
@@ -708,9 +690,7 @@ ol, ul {
 }
 
 .inline-list {
-	& {
-		padding: 0;
-	}
+	padding: 0;
 
 	& > li {
 		display: inline;
@@ -791,12 +771,10 @@ p.setting {
 
 .setting-keyword-list-list.setting-list, .setting-keyword-list-list > .setting-list {
 	& > .setting-element > details {
-		& {
-			display: inline;
-			padding: 8px;
-			border: 1px solid transparent;
-			border-radius: 6px;
-		}
+		display: inline;
+		padding: 8px;
+		border: 1px solid transparent;
+		border-radius: 6px;
 
 		html.popup & {
 			display: block;
