@@ -4,16 +4,415 @@ Copyright © 2021-present ‘ator-dev’, Mark My Search contributors.
 Licensed under the EUPL-1.2-or-later.
 -->
 <!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="utf-8">
-		<style>
-			body {
-				background: hsl(300 100% 6%);
-			}
-		</style>
-	</head>
-	<body>
-		<script src="/dist/pages/options.mjs" type="module"></script>
-	</body>
+<html lang="en-GB">
+<head>
+	<meta http-equiv="content-security-policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Options (Mark My Search)</title>
+	<link rel="icon" href="/icons/mms.svg" sizes="any">
+	<link rel="stylesheet" href="style/main.css">
+	<link rel="stylesheet" href="style/variant/options.css">
+	<script src="/dist/page-priority.js"></script>
+	<script src="/dist/page.js" defer=""></script>
+	<script src="/dist/pages/options.js" defer=""></script>
+</head>
+<body class="fill-viewport">
+	<header id="header">
+		<div class="brand">
+			<img class="logo-icon" src="/icons/mms.svg">
+			<a class="logo-title" href="https://markmysearch.ator.systems">Mark My Search</a>
+		</div>
+		<nav class="controls">
+			<a href="#main" class="hidden">Skip navigation</a>
+			<a href="/pages/startpage.html">Start</a>
+			<a href="">Options</a>
+			<div class="menu">
+				<a href="#theme">Set theme</a>
+				<fieldset>
+					<legend>Select a site theme</legend>
+					<input type="radio" id="theme-light" name="theme">
+					<label for="theme-light">Light</label>
+					<input type="radio" id="theme" name="theme" checked="">
+					<label for="theme">Automatic</label>
+					<input type="radio" id="theme-dark" name="theme">
+					<label for="theme-dark">Dark</label>
+				</fieldset>
+			</div>
+		</nav>
+	</header>
+	<div id="main-container">
+		<div class="sidebar sidebar-filled">
+			<nav class="sidebar-content">
+				<h1>
+					Options
+				</h1>
+				<ul class="tab-list">
+					<li>
+						<a href="#section--general">General</a>
+					</li>
+					<li>
+						<a href="#section--toolbar">Toolbar</a>
+					</li>
+					<li>
+						<a href="#section--highlighting">Highlighting</a>
+					</li>
+					<li>
+						<a href="#section--search-highlighting">Search-highlighting</a>
+					</li>
+					<li>
+						<a href="#section--automation">Automation</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+		<main id="main" class="exclusive-sections">
+			<section class="section">
+				<h2 id="section--general">
+					General
+				</h2>
+				<div class="setting-list">
+					<div><input id="setting--summoning-restore-keywords" type="checkbox" checked=""></div>
+					<div><label for="setting--summoning-restore-keywords">
+						When re-summoning in a tab, restore the last keywords
+					</label></div>
+				</div>
+				<p class="image-placeholder">Web search demo</p>
+			</section>
+			<section class="section">
+				<h2 id="section--toolbar">
+					Toolbar
+				</h2>
+				<section class="group">
+					<h3 id="group--toolbar-style">
+						Style
+					</h3>
+					<div class="setting-list">
+						<div data-unit="px"><input id="setting--toolbar-font-size" type="number" min="0" value="15"></div>
+						<div><label for="setting--toolbar-font-size">
+							Font size
+						</label></div>
+						<div><input id="setting--toolbar-keyword-opacity" type="number" min="0" max="1" step="0.1" value="0.86"></div>
+						<div><label for="setting--toolbar-keyword-opacity">
+							Opacity of keyword buttons
+						</label></div>
+						<div><input id="setting--toolbar-control-opacity" type="number" min="0" max="1" step="0.1" value="0.8"></div>
+						<div><label for="setting--toolbar-control-opacity">
+							Opacity of other buttons
+						</label></div>
+						<div data-unit="px"><input id="setting--toolbar-corner-radius" type="number" min="0" value="4"></div>
+						<div><label for="setting--toolbar-corner-radius">
+							Radius of rounded corners
+						</label></div>
+					</div>
+					<p class="image-placeholder">Toolbar w/ current controls</p>
+				</section>
+				<section class="group">
+					<h3 id="group--toolbar-controls">
+						Toolbar Buttons
+					</h3>
+					<div class="setting-list">
+						<div><input id="setting--toolbar-control--dismiss" type="checkbox" checked=""></div>
+						<div><label for="setting--toolbar-control--dismiss">
+							<div class="toolbar-button"><img src="/icons/close.svg" alt="Dismiss From Tab"></div>
+							Dismiss from the current tab
+						</label></div>
+						<div><input id="setting--toolbar-control--search-keywords" type="checkbox"></div>
+						<div><label for="setting--toolbar-control--search-keywords">
+							<div class="toolbar-button"><img src="/icons/search.svg" alt="Look Up Keywords"></div>
+							Perform a search using the current keywords
+						</label></div>
+						<div><input id="setting--toolbar-control--toggle-highlight-display" type="checkbox" checked=""></div>
+						<div><label for="setting--toolbar-control--toggle-highlight-display">
+							<div class="toolbar-button"><img src="/icons/show.svg" alt="Show/Hide Highlighting"></div>
+							Toggle display of highlighting
+						</label></div>
+						<div><input id="setting--toolbar-control--add-keyword" type="checkbox" checked=""></div>
+						<div><label for="setting--toolbar-control--add-keyword">
+							<div class="toolbar-button"><img src="/icons/create.svg" alt="Add Keyword"></div>
+							Add a new keyword to the toolbar
+						</label></div>
+						<div><input id="setting--toolbar-control--apply-auto-keywords" type="checkbox" checked=""></div>
+						<div><label for="setting--toolbar-control--apply-auto-keywords">
+							<div class="toolbar-button"><img src="/icons/refresh.svg" alt="Apply Automatic Keywords"></div>
+							Replace keywords with detected search keywords
+						</label></div>
+					</div>
+					<p class="image-placeholder">Toolbar w/ current controls</p>
+				</section>
+				<section class="group">
+					<h3 id="group--toolbar-keyword-controls">
+						Keyword Buttons
+					</h3>
+					<div class="setting-list">
+						<div><input id="setting--toolbar-keyword-control--edit" type="checkbox" checked=""></div>
+						<div><label for="setting--toolbar-keyword-control--edit">
+							<div class="toolbar-button"><img src="/icons/edit.svg" alt="Edit Keyword"></div>
+							Edit keyword
+						</label></div>
+						<div><input id="setting--toolbar-keyword-control--menu" type="checkbox" checked=""></div>
+						<div><label for="setting--toolbar-keyword-control--menu">
+							<div class="toolbar-button"><img src="/icons/reveal.svg" alt="Toggle Keyword Menu"></div>
+							Open keyword matching options
+						</label></div>
+					</div>
+					<p class="image-placeholder">Keyword w/ current controls</p>
+				</section>
+				<section class="group">
+					<h3 id="group--toolbar-keyword-matching-defaults">
+						Add Keyword: Default Options
+					</h3>
+					<div class="setting-list">
+						<div><input id="setting--toolbar-keyword-matching-default--case-sensitivity" type="checkbox"></div>
+						<div><label for="setting--toolbar-keyword-matching-default--case-sensitivity">
+							Case-sensitive
+						</label></div>
+						<div><input id="setting--toolbar-keyword-matching-default--stemming" type="checkbox" checked=""></div>
+						<div><label for="setting--toolbar-keyword-matching-default--stemming">
+							Match word forms
+						</label></div>
+						<div><input id="setting--toolbar-keyword-matching-default--whole-word" type="checkbox"></div>
+						<div><label for="setting--toolbar-keyword-matching-default--whole-word">
+							Match whole words
+						</label></div>
+						<div><input id="setting--toolbar-keyword-matching-default--diacritics-sensitivity" type="checkbox"></div>
+						<div><label for="setting--toolbar-keyword-matching-default--diacritics-sensitivity">
+							Diacritics-sensitive
+						</label></div>
+						<div><input id="setting--toolbar-keyword-matching-default--regex" type="checkbox"></div>
+						<div><label for="setting--toolbar-keyword-matching-default--regex">
+							<i>Regular expression</i> (advanced)
+						</label></div>
+					</div>
+					<p class="image-placeholder">Keyword w/ current controls</p>
+				</section>
+			</section>
+			<section class="section">
+				<h2 id="section--highlighting">
+					Highlighting
+				</h2>
+				<section class="group">
+					<h3 id="group--highlighting-colors">
+						Colours
+					</h3>
+					<div class="setting-list-container">
+						<ul class="setting-list">
+							<li class="setting-element-prototype setting-element setting-color-range-container">
+								<input type="number" min="0" max="360" step="10" value="0">
+								<div class="setting-color-range">
+									<input type="range" min="0" max="360" step="10" tabindex="-1" value="0">
+								</div>
+							</li>
+						</ul>
+						<div class="setting-element-adder">
+							<button>Add Colour</button>
+						</div>
+					</div>
+					<p class="image-placeholder">Toolbar w/ keywords w/ highlight colours</p>
+				</section>
+				<section class="group">
+					<h3 id="group--highlighting-website-blocklist">
+						Websites Not To Highlight
+					</h3>
+					<div class="setting-list-container">
+						<ul class="setting-list">
+							<li class="setting-element-prototype setting-element">
+								<input type="text">
+							</li>
+						</ul>
+						<div class="setting-element-adder">
+							<button>Add Website</button>
+						</div>
+					</div>
+				</section>
+				<section class="group">
+					<h3 id="group--highlighting-algorithm">
+						Algorithm (advanced)
+					</h3>
+					<div class="setting-list">
+						<div><select id="setting--highlighting-engine">
+							<option value="ELEMENT" selected="">Element</option>
+							<option value="PAINT">Paint</option>
+						</select></div>
+						<div><label for="setting--highlighting-engine">
+							Highlighting engine
+						</label></div>
+					</div>
+				</section>
+			</section>
+			<section class="section">
+				<h2 id="section--search-highlighting">
+					Search-highlighting
+				</h2>
+				<p>
+					Summon <i>Mark My Search</i> when you search online.
+				</p>
+				<div class="setting-list">
+					<div><input id="setting--search-highlighting" type="checkbox" checked=""></div>
+					<div>
+						<label for="setting--search-highlighting">
+							Active
+						</label>
+					</div>
+				</div>
+				<p class="image-placeholder">Web search w/ search bar and highlighted keywords and toolbar</p>
+				<div class="setting-list">
+					<div><input id="setting--search-highlighting-excluded-keywords" type="text" value="i,a,an,and,or,not,the,that,there,where,which,to,do,of,in,on,at,too,if,for,while,is,as,isn't,are,aren't,can,can't,how,vs,them,their,theirs,her,hers,him,his,it,its,me,my,one,one's,you,your,yours"></div>
+					<div><label for="setting--search-highlighting-excluded-keywords">
+						Search keywords to exclude
+					</label></div>
+				</div>
+				<details>
+					<summary>
+						Configuration
+					</summary>
+					<p>
+						In the URL <u><i>https://google.com/search?<strong>q=keyword</strong></i></u>,
+						<strong><i>q=</i></strong> is the parameter and <strong><i>keyword</i></strong> is the search.
+						<br>
+						<i>Mark My Search</i> detects the parameter and activates automatically.
+					</p>
+					<h4>
+						URL Parameters:
+					</h4>
+					<div class="setting-list-container">
+						<ul class="setting-list">
+							<li class="setting-element-prototype setting-element">
+								<input type="text">
+							</li>
+						</ul>
+						<div class="setting-element-adder">
+							<button>Add Parameter</button>
+						</div>
+					</div>
+					<h4>
+						Ignored Websites:
+					</h4>
+					<div class="setting-list-container">
+						<ul class="setting-list">
+							<li class="setting-element-prototype setting-element">
+								<input type="text">
+							</li>
+						</ul>
+						<div class="setting-element-adder">
+							<button>Add Website</button>
+						</div>
+					</div>
+				</details>
+				<section class="group">
+					<h3 id="group--search-highlighting-highlights">
+						Highlights
+					</h3>
+					<div class="setting-list">
+						<div><input
+							id="setting--search-highlighting-visibility--show"
+							name="setting--search-highlighting-visibility"
+							type="radio" checked=""></div>
+						<div><label for="setting--search-highlighting-visibility--show">
+							Shown
+						</label></div>
+						<div><input
+							id="setting--search-highlighting-visibility--hide"
+							name="setting--search-highlighting-visibility"
+							type="radio"></div>
+						<div><label for="setting--search-highlighting-visibility--hide">
+							Hidden
+						</label></div>
+						<div><input
+							id="setting--search-highlighting-visibility--hide-show"
+							name="setting--search-highlighting-visibility"
+							type="radio"></div>
+						<div><label for="setting--search-highlighting-visibility--hide-show">
+							Hidden until leaving search results
+						</label></div>
+					</div>
+				</section>
+				<section class="group">
+					<h3 id="group--search-highlighting-toolbar">
+						Toolbar
+					</h3>
+					<div class="setting-list">
+						<div><input
+							id="setting--search-highlighting-toolbar-collapsing--expand"
+							name="setting--search-highlighting-toolbar-collapsing"
+							type="radio" checked=""></div>
+						<div><label for="setting--search-highlighting-toolbar-collapsing--expand">
+							Expanded
+						</label></div>
+						<div><input
+							id="setting--search-highlighting-toolbar-collapsing--collapse"
+							name="setting--search-highlighting-toolbar-collapsing"
+							type="radio"></div>
+						<div><label for="setting--search-highlighting-toolbar-collapsing--collapse">
+							Collapsed
+						</label></div>
+					</div>
+				</section>
+			</section>
+			<section class="section">
+				<h2 id="section--automation">
+					Automation
+				</h2>
+				<section class="group">
+					<h3 id="group--keyword-lists">
+						Keyword Lists
+					</h3>
+					<div class="setting-list-container setting-keyword-list-list">
+						<ul class="setting-list">
+							<li class="setting-element-prototype setting-element" data-template="l">
+								<details open="">
+									<summary>
+										List {l}
+									</summary>
+									<div class="setting">
+										<input id="setting--keyword-list-{l}--name" type="text" value="List {l}">
+										<label for="setting--keyword-list-{l}--name">
+											Name
+										</label>
+									</div>
+									<h4>
+										Keywords
+									</h4>
+									<div class="setting-list-container">
+										<ul class="setting-list">
+											<li class="setting-element-prototype setting-element setting" data-template="k">
+												<input type="text">
+											</li>
+										</ul>
+										<div class="setting-element-adder">
+											<button>
+												Add Keyword
+											</button>
+										</div>
+									</div>
+									<h4>
+										Websites
+									</h4>
+									<div class="setting-list-container">
+										<ul class="setting-list">
+											<li class="setting-element-prototype setting-element setting" data-template="p">
+												<input type="text">
+											</li>
+										</ul>
+										<div class="setting-element-adder">
+											<button>
+												Add Website
+											</button>
+										</div>
+									</div>
+								</details>
+							</li>
+						</ul>
+						<div class="setting-element-adder">
+							<button>
+								Add Keyword List
+							</button>
+						</div>
+					</div>
+				</section>
+			</section>
+		</main>
+		<div class="sidebar"></div>
+	</div>
+</body>
 </html>

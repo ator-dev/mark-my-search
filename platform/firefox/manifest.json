@@ -4,7 +4,7 @@
 	"description": "Highlight searched keywords. Find matches instantly.",
 	"version": "2.0.0",
 
-	"browser_specific_settings": { "gecko": { "id": "mark-my-search@searchmarkers.github.io" } },
+	"browser_specific_settings": { "gecko": { "id": "{3c87dcad-dbbd-4be1-b07b-b6d0739b0aec}" } },
 
 	"icons": {
 		"48": "/icons/mms.svg",
@@ -48,7 +48,7 @@
 	"action": {
 		"default_icon": "/icons/mms.svg",
 		"default_title": "Mark My Search",
-		"default_popup": "/pages/popup.html"
+		"default_popup": "/pages/popup-new.html?popup#section--general"
 	},
 
 	"web_accessible_resources": [
